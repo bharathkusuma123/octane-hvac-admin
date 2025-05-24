@@ -1,0 +1,75 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+}
+
+.compo-main{
+  margin-top: 30px !important;
+}
+/* Main wrapper styling */
+.comp-wrapper {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Header styles */
+.comp-title {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+.comp-subtitle {
+  color: #666;
+  margin-bottom: 20px;
+    text-align: left;
+
+}
+
+/* Label style */
+.comp-label {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+/* Input and Textarea style */
+.comp-input,
+.comp-textarea {
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+/* Buttons */
+.comp-btn-cancel {
+  background-color: #eee;
+  color: #333;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+/* Save Button */
+.comp-btn-save {
+  background-color: #007bff; /* Bootstrap blue */
+  color: #fff;
+  border: 1px solid #007bff;
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+/* Hover Effects */
+.comp-btn-cancel:hover {
+  background-color: #e2e6ea;
+  border-color: #adb5bd;
+}
+
+.comp-btn-save:hover {
+  background-color: #0069d9;
+  border-color: #0062cc;
+}

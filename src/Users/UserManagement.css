@@ -1,0 +1,105 @@
+.user-management-container {
+  max-width: 1200px;
+  margin: 40px  auto;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  text-align: left;
+}
+
+.user-management-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #2e2e2e;
+}
+
+.user-management-subtitle {
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.user-management-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.user-management-section h3 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.user-management-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.user-management-input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.user-management-textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.user-management-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+}
+
+.user-management-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.user-management-cancel-btn,
+.user-management-save-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.user-management-cancel-btn {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.user-management-save-btn {
+  background-color: #1669f2;
+  color: #fff;
+}
+
+/* Responsive Fixes */
+@media (max-width: 768px) {
+  .user-management-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .user-management-cancel-btn,
+  .user-management-save-btn {
+    width: 100%;
+  }
+}

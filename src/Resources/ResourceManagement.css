@@ -1,0 +1,124 @@
+.resource-mgmt-container {
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+  color: #333;
+}
+
+.resource-mgmt-title {
+  font-size: 28px;
+  color: #1d4ed8;
+  margin-bottom: 10px;
+}
+
+.resource-mgmt-title2{
+         margin-bottom: 5px;
+  font-size: 28px;
+}
+.resource-mgmt-box {
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin: auto;
+  text-align: left;
+}
+
+.resource-mgmt-subtitle {
+  margin-bottom: 20px;
+  color: #777;
+}
+
+.resource-mgmt-form {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.resource-mgmt-heading {
+  margin-bottom: 10px;
+  font-size: 20px;
+  /* color: #1e3a8a; */
+}
+
+.resource-mgmt-row {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.resource-mgmt-group {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+}
+
+.resource-mgmt-group label {
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.resource-mgmt-group input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.resource-mgmt-group input:focus {
+  border-color: #1d4ed8;
+}
+
+.resource-mgmt-status-row {
+  display: flex;
+  gap: 20px;
+  padding: 10px 0;
+}
+
+.resource-mgmt-status-row label {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.resource-mgmt-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.resource-mgmt-cancel,
+.resource-mgmt-save {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.resource-mgmt-cancel {
+  background: #f3f4f6;
+  color: #333;
+}
+
+.resource-mgmt-save {
+  background: #1d4ed8;
+  color: #fff;
+}
+
+@media (max-width: 768px) {
+  .resource-mgmt-row {
+    flex-direction: column;
+  }
+
+  .resource-mgmt-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .resource-mgmt-box {
+    padding: 20px;
+  }
+}
