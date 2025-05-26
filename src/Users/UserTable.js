@@ -1,28 +1,28 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./UserManagement.css";
 
 const UserTable = ({ onAdd }) => {
-  const dummyData = [
-    {
-      user_id: 1,
-      username: "john.doe",
-      full_name: "John Doe",
-      email: "john@example.com",
-      phone: "+1 123-456-7890",
-      telephone: "+1 111-222-3333",
-      city: "Riyadh",
-      country_code: "+966",
-      status: "Active",
-      remarks: "No remarks",
-      role: "Service Engineer",
-      hourly_rate: "120.00",
-      address: "1234 Main Street, Riyadh, KSA",
-      created_at: "2024-01-15 08:00:00",
-      updated_at: "2024-05-15 09:45:00",
-      created_by: "admin",
-      updated_by: "admin"
-    }
-  ];
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    fetch("http://175.29.21.7:8006/users/")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Sort by created_at descending (most recent first)
+        const sortedData = data.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+        setUsers(sortedData);
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+      });
+  }, []);
 
   return (
     <div className="container my-4">
@@ -55,7 +55,7 @@ const UserTable = ({ onAdd }) => {
               </tr>
             </thead>
             <tbody>
-              {dummyData.map((user, idx) => (
+              {users.map((user, idx) => (
                 <tr key={idx}>
                   <td>{user.user_id}</td>
                   <td>{user.username}</td>
@@ -78,6 +78,9 @@ const UserTable = ({ onAdd }) => {
               ))}
             </tbody>
           </table>
+          {users.length === 0 && (
+            <div className="text-center p-3">Loading users or no data available.</div>
+          )}
         </div>
       </div>
     </div>
