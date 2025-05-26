@@ -169,7 +169,7 @@ const handleSubmit = async (e) => {
               <option>Admin</option>
               <option>Service Manager</option>
               <option>Service Engineer</option>
-              <option>Customer</option>
+              {/* <option>Customer</option> */}
             </select>
           </div>
         </section>
