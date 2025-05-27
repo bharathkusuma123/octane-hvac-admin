@@ -3,26 +3,44 @@ import "./UserManagement.css";
 
 const UserTable = ({ onAdd }) => {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [entriesPerPage, setEntriesPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     fetch("http://175.29.21.7:8006/users/")
       .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to fetch users");
-        }
+        if (!response.ok) throw new Error("Failed to fetch users");
         return response.json();
       })
       .then((data) => {
-        // Sort by created_at descending (most recent first)
         const sortedData = data.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
         setUsers(sortedData);
+        setFilteredUsers(sortedData);
       })
       .catch((error) => {
         console.error("Error fetching user data:", error);
       });
   }, []);
+
+  useEffect(() => {
+    const filtered = users.filter((user) =>
+      Object.values(user)
+        .join(" ")
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    );
+    setFilteredUsers(filtered);
+    setCurrentPage(1); // reset to page 1 on new search
+  }, [searchTerm, users]);
+
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstEntry, indexOfLastEntry);
+  const totalPages = Math.ceil(filteredUsers.length / entriesPerPage);
 
   return (
     <div className="container my-4">
@@ -31,6 +49,31 @@ const UserTable = ({ onAdd }) => {
           <h2 className="user-management-title">User List</h2>
           <button className="btn btn-primary" onClick={onAdd}>Add User</button>
         </div>
+
+        <div className="table-controls d-flex justify-content-between align-items-center mb-3 flex-wrap">
+          <div className="entries-selector d-flex align-items-center gap-2">
+            Show
+            <select
+              value={entriesPerPage}
+              onChange={(e) => setEntriesPerPage(Number(e.target.value))}
+              className="form-select form-select-sm w-auto"
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </select>
+            entries
+          </div>
+
+          <input
+            type="text"
+            placeholder="Search users..."
+            className="form-control search-input w-auto"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
         <div className="table-responsive">
           <table className="table table-bordered table-hover">
             <thead className="table-light">
@@ -55,7 +98,7 @@ const UserTable = ({ onAdd }) => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user, idx) => (
+              {currentUsers.map((user, idx) => (
                 <tr key={idx}>
                   <td>{user.user_id}</td>
                   <td>{user.username}</td>
@@ -78,9 +121,31 @@ const UserTable = ({ onAdd }) => {
               ))}
             </tbody>
           </table>
-          {users.length === 0 && (
-            <div className="text-center p-3">Loading users or no data available.</div>
+
+          {filteredUsers.length === 0 && (
+            <div className="text-center p-3">No users found.</div>
           )}
+        </div>
+
+        {/* Pagination Controls */}
+        <div className="pagination-controls d-flex justify-content-center mt-3">
+          <button
+            className="btn btn-outline-primary me-2"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+          >
+            Previous
+          </button>
+          <span className="align-self-center mx-2">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            className="btn btn-outline-primary ms-2"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+          >
+            Next
+          </button>
         </div>
       </div>
     </div>
