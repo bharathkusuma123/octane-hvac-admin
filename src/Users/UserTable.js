@@ -61,7 +61,7 @@ const UserTable = ({ onAdd }) => {
                   <td>{user.username}</td>
                   <td>{user.full_name}</td>
                   <td>{user.email}</td>
-                  <td>{user.phone}</td>
+                  <td>{user.mobile_no}</td>
                   <td>{user.telephone}</td>
                   <td>{user.city}</td>
                   <td>{user.country_code}</td>
