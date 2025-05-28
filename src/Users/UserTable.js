@@ -58,9 +58,9 @@ const UserTable = ({ onAdd }) => {
               onChange={(e) => setEntriesPerPage(Number(e.target.value))}
               className="form-select form-select-sm w-auto"
             >
+              <option value={5}>5</option>
               <option value={10}>10</option>
-              <option value={25}>25</option>
-              <option value={50}>50</option>
+              <option value={20}>20</option>
             </select>
             entries
           </div>
@@ -78,6 +78,7 @@ const UserTable = ({ onAdd }) => {
           <table className="table table-bordered table-hover">
             <thead className="table-light">
               <tr>
+                <th>S.No</th>
                 <th>User ID</th>
                 <th>Username</th>
                 <th>Full Name</th>
@@ -100,6 +101,7 @@ const UserTable = ({ onAdd }) => {
             <tbody>
               {currentUsers.map((user, idx) => (
                 <tr key={idx}>
+                  <td>{indexOfFirstEntry + idx + 1}</td> {/* S.No */}
                   <td>{user.user_id}</td>
                   <td>{user.username}</td>
                   <td>{user.full_name}</td>
