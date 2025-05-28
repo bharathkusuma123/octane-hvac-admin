@@ -26,7 +26,7 @@
 }
 
 .user-management-section h3 {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 500;
   color: #333;
   margin-bottom: 0.5rem;
@@ -147,4 +147,12 @@
     display: flex;
     justify-content: space-between;
   }
+}
+
+
+
+.form-group label{
+
+    font-weight: 500;
+    margin-bottom: 5px;
 }
