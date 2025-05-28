@@ -165,8 +165,6 @@ const handleSubmit = async (e) => {
               required
             >
               <option value="">Select role</option>
-              <option>Super Admin</option>
-              <option>Admin</option>
               <option>Service Manager</option>
               <option>Service Engineer</option>
               {/* <option>Customer</option> */}
