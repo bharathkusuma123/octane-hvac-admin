@@ -23,11 +23,11 @@ const UserForm = ({ onCancel, onSave }) => {
     current_password: "",
     last_password: "",
     status: "Active",
-    hourly_rate: "",
-    security_question1: "",
-    answer1: "",
-    security_question2: "",
-    answer2: "",
+    // hourly_rate: "",
+    // security_question1: "",
+    // answer1: "",
+    // security_question2: "",
+    // answer2: "",
     remarks: "",
     created_by: "admin",
     updated_by: "admin",
@@ -78,11 +78,11 @@ const UserForm = ({ onCancel, onSave }) => {
       last_password: formData.last_password || null,
       password: formData.current_password || null,
       status: formData.status || "Active",
-      hourly_rate: formData.hourly_rate ? parseFloat(formData.hourly_rate) : 0,
-      security_question1: formData.security_question1 || null,
-      answer1: safeTrim(formData.answer1) || null,
-      security_question2: formData.security_question2 || null,
-      answer2: safeTrim(formData.answer2) || null,
+      // hourly_rate: formData.hourly_rate ? parseFloat(formData.hourly_rate) : 0,
+      // security_question1: formData.security_question1 || null,
+      // answer1: safeTrim(formData.answer1) || null,
+      // security_question2: formData.security_question2 || null,
+      // answer2: safeTrim(formData.answer2) || null,
       remarks: safeTrim(formData.remarks) || null,
       created_by: formData.created_by || "admin",
       updated_by: formData.updated_by || "admin",
@@ -317,7 +317,7 @@ const UserForm = ({ onCancel, onSave }) => {
                 </label>
               </div>
             </div>
-            <div className="form-group">
+            {/* <div className="form-group">
               <label >Hourly Rate</label>
               <input
                 type="number"
@@ -329,12 +329,12 @@ const UserForm = ({ onCancel, onSave }) => {
                 value={formData.hourly_rate}
                 onChange={handleChange}
               />
-            </div>
+            </div> */}
           </div>
         </section>
 
         {/* Security Questions */}
-        <section className="user-management-section">
+        {/* <section className="user-management-section">
           <h3>Security Questions</h3>
           <div className="user-management-row">
             <div className="form-group">
@@ -398,7 +398,7 @@ const UserForm = ({ onCancel, onSave }) => {
               />
             </div>
           </div>
-        </section>
+        </section> */}
 
         {/* Additional Notes */}
         <section className="user-management-section">
