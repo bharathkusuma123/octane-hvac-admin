@@ -138,7 +138,7 @@ const ProductTable = ({ onAdd }) => {
 
         <div className="table-responsive">
           <table className="table table-bordered table-striped">
-            <thead className="table-light">
+            <thead className="table-dark">
               <tr>
                 <th>S.No</th>
                 <th>Product ID</th>
