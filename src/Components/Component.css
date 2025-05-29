@@ -1,7 +1,7 @@
-body {
+/* body {
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
-}
+} */
 
 .compo-main{
   margin-top: 30px !important;
@@ -13,20 +13,28 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-/* Header styles */
-.comp-title {
-  font-size: 28px;
+.component-management-container {
+  background-color: #fff;
+  padding: 30px;
+  margin: 40px auto;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+}
+
+.component-management-title {
+  font-size: 1.8rem;
   font-weight: 600;
-  margin-bottom: 5px;
   text-align: left;
 }
 
-.comp-subtitle {
+.component-management-subtitle {
+  font-size: 1rem;
   color: #666;
-  margin-bottom: 20px;
-    text-align: left;
-
+  margin-bottom: 10px;
+  text-align: left;
 }
+
 
 /* Label style */
 .comp-label {
@@ -72,4 +80,182 @@ body {
 .comp-btn-save:hover {
   background-color: #0069d9;
   border-color: #0062cc;
+}
+
+/* User Management Table  */
+
+
+.user-management-container {
+  background-color: #fff;
+  padding: 30px;
+  margin: 40px auto;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-management-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.user-management-section h3{
+  font-size: 20px;
+}
+
+.user-management-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 25px 0 15px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 5px;
+  text-align: left;
+}
+
+.form-label {
+  font-weight: 500;
+  text-align: left !important;
+  display: block;
+}
+
+.table-responsive {
+  margin-top: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  background-color: #343a40;
+  font-weight: 600;
+  color: white;
+  vertical-align: middle;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-outline-secondary {
+  color: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #6c757d;
+  color: white;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* Form specific styles */
+.user-management-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.user-management-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.user-management-input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 100%;
+}
+
+.user-management-textarea {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+  min-height: 60px;
+}
+
+.user-management-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 8px;
+}
+
+.user-management-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 1rem;
+}
+
+.user-management-cancel-btn,
+.user-management-save-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.user-management-cancel-btn {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.user-management-save-btn {
+  background-color: #1669f2;
+  color: #fff;
+}
+
+/* Responsive Fixes */
+@media (max-width: 768px) {
+  .user-management-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .user-management-cancel-btn,
+  .user-management-save-btn {
+    width: 100%;
+  }
+}
+
+.form-group label {
+  font-weight: 500;
+  margin-bottom: 5px;
 }

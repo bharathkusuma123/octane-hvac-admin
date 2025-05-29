@@ -1,6 +1,6 @@
 // src/components/ProductForm.js
 import React, { useState } from "react";
-import "./Product(HVACdevices).css";
+import "./Product.css";
 import axios from "axios";
 
 const ProductForm = ({ onCancel, onSave }) => {

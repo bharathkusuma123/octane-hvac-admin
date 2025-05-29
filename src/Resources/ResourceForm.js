@@ -23,8 +23,7 @@ const ResourceForm = ({ onCancel, onSave }) => {
   };
 
   return (
-    <div className="resource-mgmt-container">
-      <div className="resource-mgmt-box">
+    <div className="resource-management-container">
         <h2 className="resource-mgmt-title2">Resource Management</h2>
         <p className="resource-mgmt-subtitle">Add, view and manage your engineering resources</p>
 
@@ -79,7 +78,6 @@ const ResourceForm = ({ onCancel, onSave }) => {
             <button type="submit" className="btn btn-primary">Save Resource</button>
           </div>
         </form>
-      </div>
     </div>
   );
 };

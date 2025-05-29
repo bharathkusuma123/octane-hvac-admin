@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import "./ResourceManagement.css";
+import React, { useEffect, useState } from "react";
+import "./ResourceManagement.css"; // Reusing UserManagement.css for consistent styling
 
 const ResourceTable = ({ onAdd }) => {
   const [resources, setResources] = useState([]);
@@ -9,7 +9,7 @@ const ResourceTable = ({ onAdd }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    // Replace this with actual API call if needed
+    // Replace this with an actual API call if needed
     const dummyData = [
       {
         resource_id: "R001",
@@ -23,11 +23,14 @@ const ResourceTable = ({ onAdd }) => {
         created_by: "admin",
         updated_by: "manager"
       },
-      // Add more dummy entries if needed
+      // Add more dummy entries as needed
     ];
 
-    setResources(dummyData);
-    setFilteredResources(dummyData);
+    const sortedData = dummyData.sort(
+      (a, b) => new Date(b.created_at) - new Date(a.created_at)
+    );
+    setResources(sortedData);
+    setFilteredResources(sortedData);
   }, []);
 
   useEffect(() => {
@@ -47,98 +50,114 @@ const ResourceTable = ({ onAdd }) => {
   const totalPages = Math.ceil(filteredResources.length / entriesPerPage);
 
   return (
-    <div className="container my-4">
-      <div className="resource-mgmt-box p-4">
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <h2 className="resource-mgmt-title2">Resource List</h2>
-          <button className="btn btn-primary" onClick={onAdd}>Add Resource</button>
+    <div className="user-management-container">
+      {/* Header */}
+      <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+        <div>
+          <h2 className="user-management-title mb-0">Resource Management</h2>
+          <p className="user-management-subtitle mb-0 text-muted">Manage resource records</p>
+        </div>
+        <button onClick={onAdd} className="btn btn-primary">
+          Add New Resource
+        </button>
+      </div>
+
+      {/* Controls */}
+      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+        <div className="d-flex align-items-center gap-2">
+          Show
+          <select
+            value={entriesPerPage}
+            onChange={(e) => setEntriesPerPage(Number(e.target.value))}
+            className="form-select form-select-sm w-auto"
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+          </select>
+          entries
         </div>
 
-        <div className="table-controls d-flex justify-content-between align-items-center mb-3 flex-wrap">
-          <div className="entries-selector d-flex align-items-center gap-2">
-            Show
-            <select
-              value={entriesPerPage}
-              onChange={(e) => setEntriesPerPage(Number(e.target.value))}
-              className="form-select form-select-sm w-auto"
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-            </select>
-            entries
-          </div>
+        <input
+          type="text"
+          placeholder="Search resources..."
+          className="form-control w-auto"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
 
-          <input
-            type="text"
-            placeholder="Search resources..."
-            className="form-control search-input w-auto"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-
-        <div className="table-responsive">
-          <table className="table table-bordered table-hover">
-            <thead className="table-light">
-              <tr>
-                <th>S.No</th>
-                <th>Resource ID</th>
-                <th>Full Name</th>
-                <th>Mobile No</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Hourly Rate</th>
-                <th>Created At</th>
-                <th>Updated At</th>
-                <th>Created By</th>
-                <th>Updated By</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentResources.map((res, idx) => (
-                <tr key={idx}>
-                  <td>{indexOfFirstEntry + idx + 1}</td>
+      {/* Table */}
+      <div className="table-responsive">
+        <table className="table table-striped table-hover">
+          <thead className="table-dark">
+            <tr>
+              <th>S.No</th>
+              <th>Resource ID</th>
+              <th>Full Name</th>
+              <th>Mobile</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Hourly Rate</th>
+              <th>Created At</th>
+              <th>Updated At</th>
+              <th>Created By</th>
+              <th>Updated By</th>
+            </tr>
+          </thead>
+          <tbody>
+            {currentResources.length > 0 ? (
+              currentResources.map((res, index) => (
+                <tr key={index}>
+                  <td>{indexOfFirstEntry + index + 1}</td>
                   <td>{res.resource_id}</td>
                   <td>{res.full_name}</td>
                   <td>{res.mobile_no}</td>
                   <td>{res.email}</td>
-                  <td>{res.status}</td>
+                  <td>
+                    <span className={`badge ${
+                      res.status === 'Active' ? 'bg-success' :
+                      res.status === 'Inactive' ? 'bg-warning text-dark' :
+                      'bg-danger'
+                    }`}>
+                      {res.status}
+                    </span>
+                  </td>
                   <td>{res.hourly_rate}</td>
-                  <td>{res.created_at}</td>
-                  <td>{res.updated_at}</td>
+                  <td>{new Date(res.created_at).toLocaleString()}</td>
+                  <td>{new Date(res.updated_at).toLocaleString()}</td>
                   <td>{res.created_by}</td>
                   <td>{res.updated_by}</td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="11" className="text-center">No resources found.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
-          {filteredResources.length === 0 && (
-            <div className="text-center p-3">No resources found.</div>
-          )}
-        </div>
-
-        {/* Pagination Controls */}
-        <div className="pagination-controls d-flex justify-content-center mt-3">
-          <button
-            className="btn btn-outline-primary me-2"
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => prev - 1)}
-          >
-            Previous
-          </button>
-          <span className="align-self-center mx-2">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            className="btn btn-outline-primary ms-2"
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((prev) => prev + 1)}
-          >
-            Next
-          </button>
-        </div>
+      {/* Pagination */}
+      <div className="pagination-controls d-flex justify-content-center mt-3">
+        <button
+          className="btn btn-outline-primary me-2"
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage((prev) => prev - 1)}
+        >
+          Previous
+        </button>
+        <span className="align-self-center mx-2">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          className="btn btn-outline-primary ms-2"
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage((prev) => prev + 1)}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

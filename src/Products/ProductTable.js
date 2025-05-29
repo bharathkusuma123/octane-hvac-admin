@@ -1,7 +1,7 @@
 // src/components/ProductTable.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./Product(HVACdevices).css";
+import "./Product.css";
 
 const ProductTable = ({ onAdd }) => {
   const [products, setProducts] = useState([]);
@@ -177,27 +177,26 @@ const ProductTable = ({ onAdd }) => {
           </table>
         </div>
 
-        {filteredProducts.length > entriesPerPage && (
-          <div className="pagination-controls d-flex justify-content-center mt-3">
-            <button
-              className="btn btn-outline-primary me-2"
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage(prev => prev - 1)}
-            >
-              Previous
-            </button>
-            <span className="align-self-center mx-2">
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              className="btn btn-outline-primary ms-2"
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage(prev => prev + 1)}
-            >
-              Next
-            </button>
-          </div>
-        )}
+        <div className="pagination-controls d-flex justify-content-center mt-3">
+          <button
+            className="btn btn-outline-primary me-2"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
+          >
+            Previous
+          </button>
+          <span className="align-self-center mx-2">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            className="btn btn-outline-primary ms-2"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
+          >
+            Next
+          </button>
+        </div>
+        
       </div>
     </div>
   );
