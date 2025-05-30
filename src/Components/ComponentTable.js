@@ -1,35 +1,31 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import "./Component.css";
 
 const ComponentTable = ({ onAdd }) => {
-  const dummyData = [
-    {
-      component_id: "05512",
-      component_name: "Heat Exchanger",
-      component_description: "Heat Exchanger CRS-5000/10000",
-      created_at: "2024-05-01 10:00:00",
-      updated_at: "2024-05-20 14:20:00",
-      created_by: "admin",
-      updated_by: "editor"
-    },
-    {
-      component_id: "08123",
-      component_name: "Cooling Coil",
-      component_description: "High-efficiency cooling coil",
-      created_at: "2024-05-03 08:15:00",
-      updated_at: "2024-05-18 16:45:00",
-      created_by: "admin",
-      updated_by: "admin"
-    }
-    // Add more if needed
-  ];
-
-  const [components, setComponents] = useState(dummyData);
-  const [filteredComponents, setFilteredComponents] = useState(dummyData);
+  const [components, setComponents] = useState([]);
+  const [filteredComponents, setFilteredComponents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Fetch data from API
+  useEffect(() => {
+    const fetchComponents = async () => {
+      try {
+        const response = await axios.get("http://175.29.21.7:8006/components/");
+        const componentsArray = Array.isArray(response.data.data) ? response.data.data : [];
+        setComponents(componentsArray);
+        setFilteredComponents(componentsArray);
+      } catch (error) {
+        console.error("Error fetching components:", error);
+      }
+    };
+
+    fetchComponents();
+  }, []);
+
+  // Filter based on search
   useEffect(() => {
     const filtered = components.filter((comp) =>
       Object.values(comp)
