@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./ResourceManagement.css"; // Reusing UserManagement.css for consistent styling
+import "./ResourceManagement.css";
 
 const ResourceTable = ({ onAdd }) => {
   const [resources, setResources] = useState([]);
@@ -8,29 +8,27 @@ const ResourceTable = ({ onAdd }) => {
   const [entriesPerPage, setEntriesPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Fetch data from API
   useEffect(() => {
-    // Replace this with an actual API call if needed
-    const dummyData = [
-      {
-        resource_id: "R001",
-        full_name: "John Doe",
-        mobile_no: "+91 9876543210",
-        email: "john.doe@example.com",
-        status: "Active",
-        hourly_rate: "150.00",
-        created_at: "2024-04-10 12:00:00",
-        updated_at: "2024-05-20 15:30:00",
-        created_by: "admin",
-        updated_by: "manager"
-      },
-      // Add more dummy entries as needed
-    ];
+    const fetchResources = async () => {
+      try {
+        const response = await fetch("http://175.29.21.7:8006/resources/");
+        const result = await response.json();
+        if (result.status === "success" && Array.isArray(result.data)) {
+          const sortedData = result.data.sort(
+            (a, b) => new Date(b.created_at) - new Date(a.created_at)
+          );
+          setResources(sortedData);
+          setFilteredResources(sortedData);
+        } else {
+          console.error("Unexpected API response format:", result);
+        }
+      } catch (error) {
+        console.error("Failed to fetch resources:", error);
+      }
+    };
 
-    const sortedData = dummyData.sort(
-      (a, b) => new Date(b.created_at) - new Date(a.created_at)
-    );
-    setResources(sortedData);
-    setFilteredResources(sortedData);
+    fetchResources();
   }, []);
 
   useEffect(() => {
@@ -51,18 +49,14 @@ const ResourceTable = ({ onAdd }) => {
 
   return (
     <div className="user-management-container">
-      {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap">
         <div>
           <h2 className="user-management-title mb-0">Resource Management</h2>
           <p className="user-management-subtitle mb-0 text-muted">Manage resource records</p>
         </div>
-        <button onClick={onAdd} className="btn btn-primary">
-          Add New Resource
-        </button>
+        <button onClick={onAdd} className="btn btn-primary">Add New Resource</button>
       </div>
 
-      {/* Controls */}
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap">
         <div className="d-flex align-items-center gap-2">
           Show
@@ -77,7 +71,6 @@ const ResourceTable = ({ onAdd }) => {
           </select>
           entries
         </div>
-
         <input
           type="text"
           placeholder="Search resources..."
@@ -87,7 +80,6 @@ const ResourceTable = ({ onAdd }) => {
         />
       </div>
 
-      {/* Table */}
       <div className="table-responsive">
         <table className="table table-striped table-hover">
           <thead className="table-dark">
@@ -108,7 +100,7 @@ const ResourceTable = ({ onAdd }) => {
           <tbody>
             {currentResources.length > 0 ? (
               currentResources.map((res, index) => (
-                <tr key={index}>
+                <tr key={res.resource_id}>
                   <td>{indexOfFirstEntry + index + 1}</td>
                   <td>{res.resource_id}</td>
                   <td>{res.full_name}</td>
@@ -139,7 +131,6 @@ const ResourceTable = ({ onAdd }) => {
         </table>
       </div>
 
-      {/* Pagination */}
       <div className="pagination-controls d-flex justify-content-center mt-3">
         <button
           className="btn btn-outline-primary me-2"

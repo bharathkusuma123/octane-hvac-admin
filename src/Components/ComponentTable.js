@@ -10,20 +10,27 @@ const ComponentTable = ({ onAdd }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Fetch data from API
-  useEffect(() => {
-    const fetchComponents = async () => {
-      try {
-        const response = await axios.get("http://175.29.21.7:8006/components/");
-        const componentsArray = Array.isArray(response.data.data) ? response.data.data : [];
-        setComponents(componentsArray);
-        setFilteredComponents(componentsArray);
-      } catch (error) {
-        console.error("Error fetching components:", error);
-      }
-    };
+useEffect(() => {
+  const fetchComponents = async () => {
+    try {
+      const response = await axios.get("http://175.29.21.7:8006/components/");
+      const componentsArray = Array.isArray(response.data.data) ? response.data.data : [];
 
-    fetchComponents();
-  }, []);
+      // Sort by created_at in descending order (most recent first)
+      const sortedComponents = componentsArray.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+
+      setComponents(sortedComponents);
+      setFilteredComponents(sortedComponents);
+    } catch (error) {
+      console.error("Error fetching components:", error);
+    }
+  };
+
+  fetchComponents();
+}, []);
+
 
   // Filter based on search
   useEffect(() => {
