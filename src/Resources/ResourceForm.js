@@ -120,17 +120,23 @@ const handleSubmit = async (e) => {
           <div className="resource-mgmt-section">
             <h3 className="resource-mgmt-heading">Status & Hourly Rate</h3>
             <div className="resource-mgmt-status-row">
+              <div className="resource-mgmt-group">
               {["Active", "Inactive", "Blocked"].map((s) => (
                 <label key={s}>
                   <input type="radio" name="status" value={s} checked={formData.status === s} onChange={handleChange} /> {s}
                 </label>
               ))}
-            </div>
-            <div className="resource-mgmt-row">
+               </div>
+
+
               <div className="resource-mgmt-group">
                 <label>Hourly Rate</label>
                 <input type="number" name="hourlyRate" value={formData.hourlyRate} onChange={handleChange} placeholder="0.00" />
-              </div>
+             
+            </div>
+            </div>
+            <div className="resource-mgmt-row">
+              
             </div>
           </div>
 
