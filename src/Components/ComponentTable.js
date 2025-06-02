@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import "./Component.css";
 
-const ComponentTable = ({ onAdd }) => {
+const ComponentTable = ({ onAdd,onEdit,onDelete }) => {
   const [components, setComponents] = useState([]);
   const [filteredComponents, setFilteredComponents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -97,6 +98,8 @@ useEffect(() => {
               <th>Updated At</th>
               <th>Created By</th>
               <th>Updated By</th>
+              <th>Actions</th> 
+
             </tr>
           </thead>
           <tbody>
@@ -111,6 +114,30 @@ useEffect(() => {
                   <td>{new Date(component.updated_at).toLocaleString()}</td>
                   <td>{component.created_by}</td>
                   <td>{component.updated_by}</td>
+                  <td>
+                    <FaEdit
+                      className="text-primary me-2"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => onEdit(component.component_id)}
+                    />
+                    <FaTrash
+                      className="text-danger"
+                      style={{ cursor: "pointer" }}
+                      onClick={async () => {
+                        try {
+                          // Call the parent delete handler (if needed)
+                          await onDelete(component.component_id);
+
+                          // Remove the deleted component from the local state
+                          setComponents(prev =>
+                            prev.filter(c => c.component_id !== component.component_id)
+                          );
+                        } catch (error) {
+                          console.error("Failed to delete component:", error);
+                        }
+                      }}
+                    />
+                  </td>
                 </tr>
               ))
             ) : (
