@@ -1,9 +1,9 @@
-// src/components/ProductTable.js
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { FaEdit, FaTrash } from "react-icons/fa";
 import "./Product.css";
 
-const ProductTable = ({ onAdd }) => {
+const ProductTable = ({ onAdd, onEdit, refreshFlag }) => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -12,58 +12,63 @@ const ProductTable = ({ onAdd }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch products from API
+const fetchProducts = async () => {
+  setLoading(true);
+  try {
+    const response = await axios.get("http://175.29.21.7:8006/products/");
+    let productsData = [];
+
+    if (Array.isArray(response.data)) {
+      productsData = response.data;
+    } else if (Array.isArray(response.data.data)) {
+      productsData = response.data.data;
+    } else if (Array.isArray(response.data.results)) {
+      productsData = response.data.results;
+    }
+
+    // Sort by created_at descending (newest first)
+    productsData.sort((a, b) => {
+      const dateA = new Date(a.created_at).getTime() || 0;
+      const dateB = new Date(b.created_at).getTime() || 0;
+      return dateB - dateA; // descending order
+    });
+
+    setProducts(productsData);
+    setFilteredProducts(productsData);
+    setError(null);
+  } catch (err) {
+    console.error("Error fetching products:", err);
+    setError(err.message);
+    setProducts([]);
+    setFilteredProducts([]);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get("http://175.29.21.7:8006/products/");
-        
-        // Handle different response structures
-        let productsData = [];
-        if (Array.isArray(response.data)) {
-          productsData = response.data;
-        } else if (Array.isArray(response.data.data)) {
-          productsData = response.data.data;
-        } else if (Array.isArray(response.data.results)) {
-          productsData = response.data.results;
-        }
-
-        console.log("Fetched products:", productsData);
-        setProducts(productsData);
-        setFilteredProducts(productsData);
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching products:", err);
-        setError(err.message);
-        setLoading(false);
-        setProducts([]);
-        setFilteredProducts([]);
-      }
-    };
-
     fetchProducts();
-  }, []);
+  }, [refreshFlag]); // refetch when refreshFlag toggles
 
-  // Filter products based on search term
   useEffect(() => {
-    const filtered = products.filter(product => 
-      product && 
-      Object.values(product)
-        .join(" ")
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
+    const filtered = products.filter(
+      (product) =>
+        product &&
+        Object.values(product)
+          .join(" ")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
     );
     setFilteredProducts(filtered);
     setCurrentPage(1);
   }, [searchTerm, products]);
 
-  // Pagination
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentProducts = filteredProducts.slice(indexOfFirstEntry, indexOfLastEntry);
   const totalPages = Math.ceil(filteredProducts.length / entriesPerPage);
 
-  // Format date
   const formatDate = (timestamp) => {
     if (!timestamp) return "-";
     try {
@@ -94,7 +99,7 @@ const ProductTable = ({ onAdd }) => {
           <div className="alert alert-danger" role="alert">
             Error loading products: {error}
           </div>
-          <button className="btn btn-primary" onClick={() => window.location.reload()}>
+          <button className="btn btn-primary" onClick={fetchProducts}>
             Retry
           </button>
         </div>
@@ -149,6 +154,7 @@ const ProductTable = ({ onAdd }) => {
                 <th>Updated At</th>
                 <th>Created By</th>
                 <th>Updated By</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -164,12 +170,42 @@ const ProductTable = ({ onAdd }) => {
                     <td>{formatDate(product.updated_at)}</td>
                     <td>{product.created_by || "-"}</td>
                     <td>{product.updated_by || "-"}</td>
+                    <td>
+                      <FaEdit
+                        className="text-primary me-2"
+                        style={{ cursor: "pointer" }}
+                        title="Edit"
+                        onClick={() => onEdit(product.product_id)}
+                      />
+                      <FaTrash
+                        className="text-danger"
+                        style={{ cursor: "pointer" }}
+                        title="Delete"
+                        onClick={async () => {
+                          if (
+                            window.confirm(
+                              "Are you sure you want to delete this product?"
+                            )
+                          ) {
+                            try {
+                              await axios.delete(
+                                `http://175.29.21.7:8006/products/${product.product_id}/`
+                              );
+                              alert("Product deleted successfully");
+                              fetchProducts();
+                            } catch (err) {
+                              alert("Failed to delete product: " + err.message);
+                            }
+                          }
+                        }}
+                      />
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="9" className="text-center">
-                    {searchTerm ? "No matching products found" : "No products available"}
+                  <td colSpan="10" className="text-center">
+                    No products found.
                   </td>
                 </tr>
               )}
@@ -177,26 +213,40 @@ const ProductTable = ({ onAdd }) => {
           </table>
         </div>
 
-        <div className="pagination-controls d-flex justify-content-center mt-3">
-          <button
-            className="btn btn-outline-primary me-2"
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => prev - 1)}
-          >
-            Previous
-          </button>
-          <span className="align-self-center mx-2">
-            Page {currentPage} of {totalPages}
-          </span>
-          <button
-            className="btn btn-outline-primary ms-2"
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((prev) => prev + 1)}
-          >
-            Next
-          </button>
-        </div>
-        
+        {totalPages > 1 && (
+          <nav aria-label="Page navigation">
+            <ul className="pagination justify-content-center">
+              <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+                <button
+                  className="page-link"
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                >
+                  Previous
+                </button>
+              </li>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <li
+                  key={page}
+                  className={`page-item ${currentPage === page ? "active" : ""}`}
+                >
+                  <button className="page-link" onClick={() => setCurrentPage(page)}>
+                    {page}
+                  </button>
+                </li>
+              ))}
+
+              <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+                <button
+                  className="page-link"
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                >
+                  Next
+                </button>
+              </li>
+            </ul>
+          </nav>
+        )}
       </div>
     </div>
   );
