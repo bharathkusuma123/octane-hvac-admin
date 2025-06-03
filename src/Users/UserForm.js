@@ -15,7 +15,7 @@ const UserForm = ({ onCancel, onSave }) => {
     full_name: "",
     email: "",
     role: "",
-    phone: "",
+    mobile: "",
     telephone: "",
     city: "",
     country_code: "",
@@ -70,7 +70,7 @@ const UserForm = ({ onCancel, onSave }) => {
       full_name: safeTrim(formData.full_name) || null,
       email: safeTrim(formData.email) || null,
       role: formData.role || null,
-      phone: safeTrim(formData.phone) || null,
+      mobile: safeTrim(formData.mobile) || null,
       telephone: safeTrim(formData.telephone) || null,
       city: safeTrim(formData.city) || null,
       country_code: safeTrim(formData.country_code) || null,
@@ -189,11 +189,11 @@ const UserForm = ({ onCancel, onSave }) => {
               <label>Mobile</label>
               <input
                 type="text"
-                id="phone"
-                name="phone"
+                id="mobile"
+                name="mobile"
                 placeholder="+1 123-456-7890"
                 className="user-management-input"
-                value={formData.phone}
+                value={formData.mobile}
                 onChange={handleChange}
               />
             </div>

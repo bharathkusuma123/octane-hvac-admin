@@ -12,39 +12,39 @@ const ProductTable = ({ onAdd, onEdit, refreshFlag }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-const fetchProducts = async () => {
-  setLoading(true);
-  try {
-    const response = await axios.get("http://175.29.21.7:8006/products/");
-    let productsData = [];
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get("http://175.29.21.7:8006/products/");
+      let productsData = [];
 
-    if (Array.isArray(response.data)) {
-      productsData = response.data;
-    } else if (Array.isArray(response.data.data)) {
-      productsData = response.data.data;
-    } else if (Array.isArray(response.data.results)) {
-      productsData = response.data.results;
+      if (Array.isArray(response.data)) {
+        productsData = response.data;
+      } else if (Array.isArray(response.data.data)) {
+        productsData = response.data.data;
+      } else if (Array.isArray(response.data.results)) {
+        productsData = response.data.results;
+      }
+
+      // Sort by created_at descending (newest first)
+      productsData.sort((a, b) => {
+        const dateA = new Date(a.created_at).getTime() || 0;
+        const dateB = new Date(b.created_at).getTime() || 0;
+        return dateB - dateA; // descending order
+      });
+
+      setProducts(productsData);
+      setFilteredProducts(productsData);
+      setError(null);
+    } catch (err) {
+      console.error("Error fetching products:", err);
+      setError(err.message);
+      setProducts([]);
+      setFilteredProducts([]);
+    } finally {
+      setLoading(false);
     }
-
-    // Sort by created_at descending (newest first)
-    productsData.sort((a, b) => {
-      const dateA = new Date(a.created_at).getTime() || 0;
-      const dateB = new Date(b.created_at).getTime() || 0;
-      return dateB - dateA; // descending order
-    });
-
-    setProducts(productsData);
-    setFilteredProducts(productsData);
-    setError(null);
-  } catch (err) {
-    console.error("Error fetching products:", err);
-    setError(err.message);
-    setProducts([]);
-    setFilteredProducts([]);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
 
   useEffect(() => {
@@ -141,22 +141,23 @@ const fetchProducts = async () => {
           />
         </div>
 
-        <div className="table-responsive">
-          <table className="table table-bordered table-striped">
-            <thead className="table-dark">
+        <div className="table-responsive mb-4">
+          <table className="table ">
+            <thead className="product-table-header">
               <tr>
                 <th>S.No</th>
                 <th>Product ID</th>
                 <th>Product Name</th>
                 <th>Description</th>
-                <th>PM Group</th>
+                {/* <th>PM Group</th> */}
                 <th>Created At</th>
                 <th>Updated At</th>
                 <th>Created By</th>
                 <th>Updated By</th>
-                <th>Actions</th>
+                {/* <th>Actions</th> */}
               </tr>
             </thead>
+
             <tbody>
               {currentProducts.length > 0 ? (
                 currentProducts.map((product, index) => (
@@ -165,12 +166,12 @@ const fetchProducts = async () => {
                     <td>{product.product_id}</td>
                     <td>{product.product_name}</td>
                     <td>{product.product_description || "-"}</td>
-                    <td>{product.pm_group || "-"}</td>
+                    {/* <td>{product.pm_group || "-"}</td> */}
                     <td>{formatDate(product.created_at)}</td>
                     <td>{formatDate(product.updated_at)}</td>
                     <td>{product.created_by || "-"}</td>
                     <td>{product.updated_by || "-"}</td>
-                    <td>
+                    {/* <td>
                       <FaEdit
                         className="text-primary me-2"
                         style={{ cursor: "pointer" }}
@@ -199,7 +200,7 @@ const fetchProducts = async () => {
                           }
                         }}
                       />
-                    </td>
+                    </td> */}
                   </tr>
                 ))
               ) : (
