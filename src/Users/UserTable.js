@@ -96,7 +96,7 @@ const UserTable = ({ onAdd }) => {
               <th>Country</th>
               <th>Status</th>
               <th>Role</th>
-              <th>Hourly Rate</th>
+              {/* <th>Hourly Rate</th> */}
               <th>Created At</th>
             </tr>
           </thead>
@@ -123,7 +123,7 @@ const UserTable = ({ onAdd }) => {
                     </span>
                   </td>
                   <td>{user.role}</td>
-                  <td>{user.hourly_rate}</td>
+                  {/* <td>{user.hourly_rate}</td> */}
                   <td>{new Date(user.created_at).toLocaleString()}</td>
                 </tr>
               ))

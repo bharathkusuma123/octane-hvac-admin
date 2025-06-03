@@ -256,7 +256,7 @@ const ResourceForm = ({ onCancel, onSave }) => {
         <div className="card-body">
           <form onSubmit={handleSubmit}>
             <div className="row g-3">
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Resource ID</label>
                 <input
                   type="text"
@@ -269,7 +269,7 @@ const ResourceForm = ({ onCancel, onSave }) => {
                 />
               </div>
 
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Resource Name (Service Engineer)</label>
                 <select
                   name="resourceId"
@@ -287,7 +287,7 @@ const ResourceForm = ({ onCancel, onSave }) => {
                 </select>
               </div>
 
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Phone</label>
                 <input
                   type="text"
@@ -299,7 +299,7 @@ const ResourceForm = ({ onCancel, onSave }) => {
                 />
               </div>
 
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Email</label>
                 <input
                   type="email"
@@ -311,7 +311,7 @@ const ResourceForm = ({ onCancel, onSave }) => {
                 />
               </div>
 
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Status</label>
                 <div className="d-flex gap-3">
                   {["Active", "Inactive", "Blocked"].map((s) => (
@@ -330,7 +330,7 @@ const ResourceForm = ({ onCancel, onSave }) => {
                 </div>
               </div>
 
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Hourly Rate</label>
                 <input
                   type="number"

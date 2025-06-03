@@ -571,7 +571,7 @@ const UserForm = ({ onCancel, onSave }) => {
             {/* Basic Information */}
             <div className="row g-3 mb-4">
               <h5>Basic Information</h5>
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Username</label>
                 <input
                   type="text"
@@ -583,7 +583,7 @@ const UserForm = ({ onCancel, onSave }) => {
                   required
                 />
               </div>
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Full Name</label>
                 <input
                   type="text"
@@ -595,7 +595,7 @@ const UserForm = ({ onCancel, onSave }) => {
                   required
                 />
               </div>
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Email</label>
                 <input
                   type="email"
@@ -626,7 +626,7 @@ const UserForm = ({ onCancel, onSave }) => {
             {/* Contact Information */}
             <div className="row g-3 mb-4">
               <h5>Contact Information</h5>
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Mobile</label>
                 <input
                   type="text"
@@ -637,7 +637,7 @@ const UserForm = ({ onCancel, onSave }) => {
                   onChange={handleChange}
                 />
               </div>
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Telephone</label>
                 <input
                   type="text"
@@ -648,7 +648,7 @@ const UserForm = ({ onCancel, onSave }) => {
                   onChange={handleChange}
                 />
               </div>
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">City</label>
                 <input
                   type="text"
@@ -691,7 +691,7 @@ const UserForm = ({ onCancel, onSave }) => {
             {/* Account Settings */}
             <div className="row g-3 mb-4">
               <h5>Account Settings</h5>
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Password</label>
                 <input
                   type="password"
@@ -703,7 +703,7 @@ const UserForm = ({ onCancel, onSave }) => {
                   required
                 />
               </div>
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Confirm Password</label>
                 <input
                   type="password"
@@ -715,7 +715,7 @@ const UserForm = ({ onCancel, onSave }) => {
                   required
                 />
               </div>
-              <div className="col-md-6">
+              <div className="col-md-4">
                 <label className="form-label">Status</label>
                 <div className="d-flex gap-3">
                   {["Active", "Inactive", "Blocked"].map((s) => (
