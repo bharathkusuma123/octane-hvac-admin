@@ -98,7 +98,7 @@ useEffect(() => {
               <th>Updated At</th>
               <th>Created By</th>
               <th>Updated By</th>
-              <th>Actions</th> 
+              {/* <th>Actions</th>  */}
 
             </tr>
           </thead>
@@ -114,7 +114,7 @@ useEffect(() => {
                   <td>{new Date(component.updated_at).toLocaleString()}</td>
                   <td>{component.created_by}</td>
                   <td>{component.updated_by}</td>
-                  <td>
+                  {/* <td>
                     <FaEdit
                       className="text-primary me-2"
                       style={{ cursor: "pointer" }}
@@ -137,7 +137,7 @@ useEffect(() => {
                         }
                       }}
                     />
-                  </td>
+                  </td> */}
                 </tr>
               ))
             ) : (
