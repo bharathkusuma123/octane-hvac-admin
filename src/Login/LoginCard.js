@@ -14,10 +14,10 @@ import logo from "../Logos/hvac-logo-new.jpg";
 
 const LoginCard = ({
   title,
-  mobileNo,           // renamed prop
+   username,            // renamed prop
   password,
   showPassword,
-  setMobileNo,         // renamed setter
+   setUsername,         // renamed setter
   setPassword,
   setShowPassword,
   handleSubmit,
@@ -41,16 +41,14 @@ const LoginCard = ({
               {error && <Alert variant="danger">{error}</Alert>}
 
               <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                  <Form.Label>Mobile Number</Form.Label>
+               <Form.Group className="mb-3">
+                  <Form.Label>Username</Form.Label>
                   <Form.Control
-                    type="tel"                       
-                    placeholder="Enter mobile number"
-                    value={mobileNo}
-                    onChange={(e) => setMobileNo(e.target.value)}
+                    type="text"
+                    placeholder="Enter username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     required
-                    pattern="[0-9]{10}"           
-                    title="Please enter a valid 10-digit mobile number"
                   />
                 </Form.Group>
 

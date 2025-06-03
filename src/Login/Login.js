@@ -4,7 +4,7 @@ import LoginCard from "./LoginCard";
 import axios from "axios";
 
 const AdminLogin = () => {
-  const [mobileNo, setMobileNo] = useState("");   // Changed from email to mobileNo
+  const [username, setUsername] = useState("");   // Changed from email to mobileNo
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
@@ -16,8 +16,8 @@ const AdminLogin = () => {
 
     try {
       
-      const response = await axios.post("http://175.29.21.7:8006/login/", {
-        mobile_no: mobileNo,   
+      const response = await axios.post("http://175.29.21.7:8006/user-login/", {
+         username,   
         password,
       });
 
@@ -32,17 +32,17 @@ const AdminLogin = () => {
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Invalid mobile number or password");
+      setError("Invalid Username or password");
     }
   };
 
   return (
   <LoginCard
   title="Admin Login"
-  mobileNo={mobileNo}
+  username={username}
   password={password}
   showPassword={showPassword}
-  setMobileNo={setMobileNo}     // <-- make sure this is here
+  setUsername={setUsername}     
   setPassword={setPassword}
   setShowPassword={setShowPassword}
   handleSubmit={handleSubmit}
