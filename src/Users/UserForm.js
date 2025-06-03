@@ -70,7 +70,7 @@ const UserForm = ({ onCancel, onSave }) => {
       full_name: safeTrim(formData.full_name) || null,
       email: safeTrim(formData.email) || null,
       role: formData.role || null,
-      mobile_no: safeTrim(formData.phone) || null,
+      phone: safeTrim(formData.phone) || null,
       telephone: safeTrim(formData.telephone) || null,
       city: safeTrim(formData.city) || null,
       country_code: safeTrim(formData.country_code) || null,
