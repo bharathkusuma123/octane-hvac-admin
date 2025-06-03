@@ -80,9 +80,9 @@ const ResourceTable = ({ onAdd }) => {
         />
       </div>
 
-      <div className="table-responsive">
-        <table className="table table-striped table-hover">
-          <thead className="table-dark">
+      <div className="table-responsive mb-4">
+        <table className="table ">
+          <thead className="product-table-header">
             <tr>
               <th>S.No</th>
               <th>Resource ID</th>
