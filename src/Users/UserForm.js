@@ -474,8 +474,8 @@ const UserForm = ({ onCancel, onSave }) => {
     last_password: "",
     status: "Active",
     remarks: "",
-    created_by: "admin",
-    updated_by: "admin",
+    created_by: "Admin",
+    updated_by: "Admin",
   });
 
   const handleChange = (e) => {
@@ -529,8 +529,8 @@ const UserForm = ({ onCancel, onSave }) => {
       // security_question2: formData.security_question2 || null,
       // answer2: safeTrim(formData.answer2) || null,
       remarks: safeTrim(formData.remarks) || null,
-      created_by: formData.created_by || "admin",
-      updated_by: formData.updated_by || "admin",
+      created_by: formData.created_by || "Admin",
+      updated_by: formData.updated_by || "Admin",
     };
 
     console.log("Sending payload", payload);
