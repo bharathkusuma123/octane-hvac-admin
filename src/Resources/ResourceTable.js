@@ -42,6 +42,18 @@ const ResourceTable = ({ onAdd }) => {
     setCurrentPage(1);
   }, [searchTerm, resources]);
 
+
+
+   const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentResources = filteredResources.slice(indexOfFirstEntry, indexOfLastEntry);
@@ -116,8 +128,8 @@ const ResourceTable = ({ onAdd }) => {
                     </span>
                   </td>
                   <td>{res.hourly_rate}</td>
-                  <td>{new Date(res.created_at).toLocaleString()}</td>
-                  <td>{new Date(res.updated_at).toLocaleString()}</td>
+                  <td>{formatDate(new Date(res.created_at).toLocaleString())}</td>
+                  <td>{formatDate(new Date(res.updated_at).toLocaleString())}</td>
                   <td>{res.created_by}</td>
                   <td>{res.updated_by}</td>
                 </tr>

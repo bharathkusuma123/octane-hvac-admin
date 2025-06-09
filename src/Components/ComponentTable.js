@@ -45,6 +45,17 @@ useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, components]);
 
+
+
+   const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentComponents = filteredComponents.slice(indexOfFirstEntry, indexOfLastEntry);
@@ -110,8 +121,8 @@ useEffect(() => {
                   <td>{component.component_id}</td>
                   <td>{component.component_name}</td>
                   <td>{component.component_description}</td>
-                  <td>{new Date(component.created_at).toLocaleString()}</td>
-                  <td>{new Date(component.updated_at).toLocaleString()}</td>
+                  <td>{formatDate(new Date(component.created_at).toLocaleString())}</td>
+                  <td>{formatDate(new Date(component.updated_at).toLocaleString())}</td>
                   <td>{component.created_by}</td>
                   <td>{component.updated_by}</td>
                   {/* <td>
