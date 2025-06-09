@@ -107,7 +107,7 @@ const ProductTable = ({ onAdd, onEdit, refreshFlag }) => {
   }
 
   return (
-    <div className="container my-4">
+    <div className="container-fluid my-4">
       <div className="comp-wrapper p-4">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h2 className="comp-title">Product List</h2>
