@@ -392,7 +392,7 @@ const ProductForm = ({ onCancel, onSave, productId }) => {
       <div className="card">
         <div className="card-header">
           <h5 className="mb-1">{productId ? "Edit Product" : "Add Product"}</h5>
-          <h6 className="text" style={{ color: '#acaeb0' }}>Fill in product details below</h6>
+          <h6 className="text" style={{ color: "white" }}>Fill in product details below</h6>
         </div>
         <div className="card-body">
           {error && <div className="alert alert-danger">{error}</div>}

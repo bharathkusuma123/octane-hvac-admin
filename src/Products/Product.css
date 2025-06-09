@@ -123,7 +123,7 @@
 }
 
 .table th {
-  background-color: #343a40;
+  background-color: #0096D6;
   font-weight: 600;
   color: white;
   vertical-align: middle;
@@ -280,8 +280,8 @@
 }
 
 .service-request-form .card-header {
-    color: #20555c;
-    background-color: #C9FDF2;
+    color: white;
+    background-color: #0096D6;
 }
 
 .service-request-form .form-control, 
@@ -404,8 +404,8 @@
 
 .table
 .product-table-header th {
-  color: #20555c;
-  background-color: #C9FDF2;
+  color: white;
+  background-color: #0096D6;
   font-weight: bold;
   text-align: center;
 }

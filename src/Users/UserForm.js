@@ -562,7 +562,7 @@ const UserForm = ({ onCancel, onSave }) => {
       <div className="card">
         <div className="card-header">
           <h5 className="mb-1">User Management</h5>
-          <h6 className="text" style={{ color: "#acaeb0" }}>
+          <h6 className="text" style={{ color: "white" }}>
             Add, view and manage user accounts
           </h6>
         </div>

@@ -240,7 +240,7 @@ const ComponentForm = ({ onCancel, onSave, initialData = {} }) => {
       <div className="card">
         <div className="card-header">
           <h5 className="mb-1">{isEditMode ? "Edit Component" : "Add Component"}</h5>
-          <h6 className="text" style={{ color: "#acaeb0" }}>
+          <h6 className="text" style={{ color: "white" }}>
             Fill in component details below
           </h6>
         </div>
