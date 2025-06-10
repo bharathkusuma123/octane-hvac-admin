@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ComponentTable from "./ComponentTable";
 import ComponentForm from "./ComponentForm";
+import baseURL from "../ApiUrl/Apiurl";
 
 const Component = () => {
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -8,7 +9,7 @@ const Component = () => {
 
   const fetchComponentById = async (id) => {
     try {
-      const res = await fetch(`http://175.29.21.7:8006/components/${id}/`);
+      const res = await fetch(`${baseURL}/components/${id}/`);
       const json = await res.json();
       return json.data;
     } catch (err) {
@@ -30,7 +31,7 @@ const Component = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this component?")) {
       try {
-        const res = await fetch(`http://175.29.21.7:8006/components/${id}/`, {
+        const res = await fetch(`${baseURL}/components/${id}/`, {
           method: "DELETE",
         });
         if (res.ok) {

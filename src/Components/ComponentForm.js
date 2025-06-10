@@ -47,8 +47,8 @@
 //     };
 
 //     const url = isEditMode
-//       ? `http://175.29.21.7:8006/components/${formState.component_id}/`
-//       : `http://175.29.21.7:8006/components/`;
+//       ? `${baseURL}/${formState.component_id}/`
+//       : `${baseURL}/components/`;
 
 //     const method = isEditMode ? "PUT" : "POST";
 
@@ -165,6 +165,7 @@
 
 import React, { useEffect, useState } from "react";
 import "./Component.css";
+import baseURL from "../ApiUrl/Apiurl";
 
 const ComponentForm = ({ onCancel, onSave, initialData = {} }) => {
   const isEditMode = !!initialData?.component_id;
@@ -209,8 +210,8 @@ const ComponentForm = ({ onCancel, onSave, initialData = {} }) => {
     };
 
     const url = isEditMode
-      ? `http://175.29.21.7:8006/components/${formState.component_id}/`
-      : `http://175.29.21.7:8006/components/`;
+      ? `${baseURL}/components/${formState.component_id}/`
+      : `${baseURL}/components/`;
 
     const method = isEditMode ? "PUT" : "POST";
 

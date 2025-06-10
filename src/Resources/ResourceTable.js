@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./ResourceManagement.css";
+import baseURL from "../ApiUrl/Apiurl";
 
 const ResourceTable = ({ onAdd }) => {
   const [resources, setResources] = useState([]);
@@ -12,7 +13,7 @@ const ResourceTable = ({ onAdd }) => {
   useEffect(() => {
     const fetchResources = async () => {
       try {
-        const response = await fetch("http://175.29.21.7:8006/resources/");
+        const response = await fetch(`${baseURL}/resources/`);
         const result = await response.json();
         if (result.status === "success" && Array.isArray(result.data)) {
           const sortedData = result.data.sort(

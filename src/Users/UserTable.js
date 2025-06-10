@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./UserManagement.css";
+import baseURL from "../ApiUrl/Apiurl";
 
 const UserTable = ({ onAdd }) => {
   const [users, setUsers] = useState([]);
@@ -9,7 +10,7 @@ const UserTable = ({ onAdd }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    fetch("http://175.29.21.7:8006/users/")
+    fetch(`${baseURL}/users/`)
       .then((response) => {
         if (!response.ok) throw new Error("Failed to fetch users");
         return response.json();

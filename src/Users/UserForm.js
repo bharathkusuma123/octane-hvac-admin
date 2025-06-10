@@ -49,7 +49,7 @@
 //     e.preventDefault();
 
 //     const generateUserId = async () => {
-//       const response = await fetch('http://175.29.21.7:8006/users/');
+//       const response = await fetch(`${baseURL}/users/`);
 //       const users = await response.json();
 
 //       const userIds = users.map(u => u.user_id).filter(id => /^USRID\d+$/.test(id));
@@ -91,7 +91,7 @@
 //     console.log("Sending payload", payload);
 
 //     try {
-//       const response = await fetch("http://175.29.21.7:8006/users/", {
+//       const response = await fetch(`${baseURL}/users/`, {
 //         method: "POST",
 //         headers: {
 //           "Content-Type": "application/json",
@@ -458,6 +458,7 @@
 
 import React, { useState } from "react";
 import axios from "axios";
+import baseURL from "../ApiUrl/Apiurl";
 
 const UserForm = ({ onCancel, onSave }) => {
   const [formData, setFormData] = useState({
@@ -494,7 +495,7 @@ const UserForm = ({ onCancel, onSave }) => {
     e.preventDefault();
 
     const generateUserId = async () => {
-      const response = await fetch('http://175.29.21.7:8006/users/');
+      const response = await fetch(`${baseURL}/users/`);
       const users = await response.json();
 
       const userIds = users.map(u => u.user_id).filter(id => /^USRID\d+$/.test(id));
@@ -536,7 +537,7 @@ const UserForm = ({ onCancel, onSave }) => {
     console.log("Sending payload", payload);
 
     try {
-      const response = await fetch("http://175.29.21.7:8006/users/", {
+      const response = await fetch(`${baseURL}/users/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

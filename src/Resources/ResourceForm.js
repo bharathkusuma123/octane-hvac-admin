@@ -14,7 +14,7 @@
 // const [engineers, setEngineers] = useState([]);
 
 //   useEffect(() => {
-//     axios.get('http://175.29.21.7:8006/users/')
+//     axios.get(`${baseURL}/users/')
 //       .then((response) => {
 //         const filtered = response.data.filter(user => user.role === 'Service Engineer');
 //         setEngineers(filtered);
@@ -60,7 +60,7 @@
 //   };
 
 //   try {
-//     const response = await axios.post("http://175.29.21.7:8006/resources/", payload);
+//     const response = await axios.post(`${baseURL}/resources/`, payload);
 //     console.log("Resource saved successfully:", response.data);
 
 //     onSave(); 
@@ -171,6 +171,7 @@
 
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import baseURL from "../ApiUrl/Apiurl";
 
 const ResourceForm = ({ onCancel, onSave }) => {
   const [formData, setFormData] = useState({
@@ -186,7 +187,7 @@ const ResourceForm = ({ onCancel, onSave }) => {
 
   useEffect(() => {
     axios
-      .get("http://175.29.21.7:8006/users/")
+      .get(`${baseURL}/users/`)
       .then((response) => {
         const filtered = response.data.filter(
           (user) => user.role === "Service Engineer"
@@ -234,7 +235,7 @@ const ResourceForm = ({ onCancel, onSave }) => {
 
     try {
       const response = await axios.post(
-        "http://175.29.21.7:8006/resources/",
+        `${baseURL}/resources/`,
         payload
       );
       console.log("Resource saved successfully:", response.data);

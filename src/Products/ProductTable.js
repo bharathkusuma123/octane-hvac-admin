@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import "./Product.css";
+import baseURL from "../ApiUrl/Apiurl";
 
 const ProductTable = ({ onAdd, onEdit, refreshFlag }) => {
   const [products, setProducts] = useState([]);
@@ -15,7 +16,7 @@ const ProductTable = ({ onAdd, onEdit, refreshFlag }) => {
   const fetchProducts = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://175.29.21.7:8006/products/");
+      const response = await axios.get(`${baseURL}/products/`);
       let productsData = [];
 
       if (Array.isArray(response.data)) {
@@ -189,7 +190,7 @@ const ProductTable = ({ onAdd, onEdit, refreshFlag }) => {
                           ) {
                             try {
                               await axios.delete(
-                                `http://175.29.21.7:8006/products/${product.product_id}/`
+                                `${baseURL}/products/${product.product_id}/`
                               );
                               alert("Product deleted successfully");
                               fetchProducts();

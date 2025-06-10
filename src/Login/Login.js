@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoginCard from "./LoginCard";
 import axios from "axios";
+import baseURL from "../ApiUrl/Apiurl";
 
 const AdminLogin = () => {
   const [username, setUsername] = useState("");   // Changed from email to mobileNo
@@ -16,7 +17,7 @@ const AdminLogin = () => {
 
     try {
       
-      const response = await axios.post("http://175.29.21.7:8006/user-login/", {
+      const response = await axios.post(`${baseURL}/user-login/`, {
          username,   
         password,
       });

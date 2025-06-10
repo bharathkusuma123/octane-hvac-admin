@@ -35,7 +35,7 @@
 
 //     const fetchProduct = async () => {
 //       try {
-//         const response = await axios.get(`http://175.29.21.7:8006/products/${productId}/`);
+//         const response = await axios.get(`${baseURL}/products/${productId}/`);
 //         const data = response.data.data;
 
 //         // Convert ISO string to datetime-local input format (yyyy-MM-ddTHH:mm)
@@ -111,7 +111,7 @@
 //         // Editing: Use PUT or PATCH API if available, else POST to update
 //         // Assuming PUT available at /products/:id/
 //         await axios.put(
-//           `http://175.29.21.7:8006/products/${productId}/`,
+//           `${baseURL}/products/${productId}/`,
 //           payload,
 //           {
 //             headers: { "Content-Type": "application/json" }
@@ -120,7 +120,7 @@
 //       } else {
 //         // Adding new product
 //         await axios.post(
-//           "http://175.29.21.7:8006/products/",
+//           `${baseURL}/products/`,
 //           payload,
 //           {
 //             headers: { "Content-Type": "application/json" }
@@ -283,6 +283,7 @@
 import React, { useState, useEffect } from "react";
 import "./Product.css";
 import axios from "axios";
+import baseURL from "../ApiUrl/Apiurl";
 
 const ProductForm = ({ onCancel, onSave, productId }) => {
   const [formData, setFormData] = useState({
@@ -302,7 +303,7 @@ const ProductForm = ({ onCancel, onSave, productId }) => {
     if (productId) {
       const fetchProduct = async () => {
         try {
-          const res = await axios.get(`http://175.29.21.7:8006/products/${productId}/`);
+          const res = await axios.get(`${baseURL}/products/${productId}/`);
           const productData = res.data;
           
           // Convert ISO dates to datetime-local format
@@ -357,7 +358,7 @@ const ProductForm = ({ onCancel, onSave, productId }) => {
     try {
       if (productId) {
         await axios.put(
-          `http://175.29.21.7:8006/products/${productId}/`,
+          `${baseURL}/products/${productId}/`,
           payload,
           {
             headers: { "Content-Type": "application/json" }
@@ -365,7 +366,7 @@ const ProductForm = ({ onCancel, onSave, productId }) => {
         );
       } else {
         await axios.post(
-          "http://175.29.21.7:8006/products/",
+          `${baseURL}/products/`,
           payload,
           {
             headers: { "Content-Type": "application/json" }

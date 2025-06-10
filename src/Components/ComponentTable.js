@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import "./Component.css";
+import baseURL from "../ApiUrl/Apiurl";
 
 const ComponentTable = ({ onAdd,onEdit,onDelete }) => {
   const [components, setComponents] = useState([]);
@@ -14,7 +15,7 @@ const ComponentTable = ({ onAdd,onEdit,onDelete }) => {
 useEffect(() => {
   const fetchComponents = async () => {
     try {
-      const response = await axios.get("http://175.29.21.7:8006/components/");
+      const response = await axios.get(`${baseURL}/components/`);
       const componentsArray = Array.isArray(response.data.data) ? response.data.data : [];
 
       // Sort by created_at in descending order (most recent first)
