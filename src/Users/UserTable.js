@@ -108,7 +108,8 @@ const UserTable = ({ onAdd }) => {
               <th>Country</th>
               <th>Status</th>
               <th>Role</th>
-              {/* <th>Hourly Rate</th> */}
+              <th>Default Company</th>
+              <th>Accessible Companies</th>
               <th>Created At</th>
             </tr>
           </thead>
@@ -135,7 +136,8 @@ const UserTable = ({ onAdd }) => {
                     </span>
                   </td>
                   <td>{user.role}</td>
-                  {/* <td>{user.hourly_rate}</td> */}
+                  <td>{user.default_company}</td>
+                 <td>{Array.isArray(user.companies) ? user.companies.join(", ") : user.companies}</td>
                   <td>{formatDate(new Date(user.created_at).toLocaleString())}</td>
                 </tr>
               ))

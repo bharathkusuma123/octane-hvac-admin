@@ -16,7 +16,7 @@ import Component from "./Components/Component";
 import Products from "./Products/Product(HVACdevices)";
 import ResourceManagement from "./Resources/ResourceManagement";
 import UserManagement from "./Users/UserManagement";
-
+import AuthProvider from "./AuthContext/AuthContext";
 import logo from "./Logos/hvac-logo-new.jpg"
 
 // 🔹 TopNavbar
@@ -30,7 +30,7 @@ const TopNavbar = () => {
     navigate("/");
   };
 
-  if (userRole !== "admin") return null;
+  if (userRole !== "Admin") return null;
 
   const navItems = [
     { path: "/admin/component", label: "Components" },
@@ -81,7 +81,7 @@ const PanelLayout = ({ children }) => (
 // 🔒 Route Protection
 const ProtectedRoute = ({ children }) => {
   const userRole = localStorage.getItem("userRole");
-  if (userRole !== "admin") {
+  if (userRole !== "Admin") {
     return <Navigate to="/" replace />;
   }
   return <PanelLayout>{children}</PanelLayout>;
@@ -90,6 +90,7 @@ const ProtectedRoute = ({ children }) => {
 // 🔁 Main App
 function App() {
   return (
+    <AuthProvider>
     <Router>
       <Routes>
         <Route path="/" element={<AdminLogin />} />
@@ -128,6 +129,7 @@ function App() {
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
+    </AuthProvider>
   );
 }
 
