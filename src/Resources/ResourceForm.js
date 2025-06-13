@@ -169,13 +169,16 @@
 
 
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import baseURL from "../ApiUrl/Apiurl";
+import { AuthContext } from "../AuthContext/AuthContext";
 
 const ResourceForm = ({ onCancel, onSave }) => {
+    const { userId, userRole } = useContext(AuthContext);
   const [formData, setFormData] = useState({
-    resourceId: "",
+    resourceId: "", // For manual RS1, RS2 etc.
+    engineerId: "", // For selected engineer's user_id
     fullName: "",
     phone: "",
     email: "",
@@ -202,13 +205,13 @@ const ResourceForm = ({ onCancel, onSave }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === "resourceId") {
+    if (name === "engineerId") {
       const selectedEngineer = engineers.find(
         (eng) => eng.user_id == value
       );
       setFormData((prev) => ({
         ...prev,
-        resourceId: value,
+        engineerId: value,
         phone: selectedEngineer?.phone || "",
         email: selectedEngineer?.email || "",
         fullName: selectedEngineer?.username || "",
@@ -220,9 +223,16 @@ const ResourceForm = ({ onCancel, onSave }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+     const selectedCompany = localStorage.getItem("selectedCompany");
+
+    // Validate required fields
+    if (!formData.resourceId || !selectedCompany) {
+      alert("Please select both an engineer and a company");
+      return;
+    }
 
     const payload = {
-      resource_id: formData.resourceId,
+      resource_id: formData.resourceId, // From manual input
       full_name: formData.fullName,
       mobile_no: formData.phone,
       email: formData.email,
@@ -230,7 +240,10 @@ const ResourceForm = ({ onCancel, onSave }) => {
       status: formData.status,
       created_by: "Admin",
       updated_by: "Admin",
-      user: formData.resourceId,
+      user: formData.engineerId, // From selected engineer's user_id
+       user_id: userId,
+      company: selectedCompany,
+      company_id: selectedCompany
     };
 
     try {
@@ -265,17 +278,17 @@ const ResourceForm = ({ onCancel, onSave }) => {
                   value={formData.resourceId}
                   onChange={handleChange}
                   className="form-control"
-                  placeholder="e.g., 00123"
+                  placeholder="e.g., RS1, RS2"
                   required
                 />
               </div>
 
               <div className="col-md-4">
-                <label className="form-label">Resource Name (Service Engineer)</label>
+                <label className="form-label">Service Engineer</label>
                 <select
-                  name="resourceId"
+                  name="engineerId"
                   className="form-control"
-                  value={formData.resourceId}
+                  value={formData.engineerId}
                   onChange={handleChange}
                   required
                 >
@@ -287,6 +300,18 @@ const ResourceForm = ({ onCancel, onSave }) => {
                   ))}
                 </select>
               </div>
+
+              {/* <div className="col-md-4">
+                <label className="form-label">Full Name</label>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
+                  className="form-control"
+                  placeholder="Engineer's full name"
+                />
+              </div> */}
 
               <div className="col-md-4">
                 <label className="form-label">Phone</label>

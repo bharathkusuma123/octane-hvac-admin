@@ -32,7 +32,7 @@ const [loggedUserCompanies, setLoggedUserCompanies] = useState([]);
 useEffect(() => {
   const fetchUserCompanies = async () => {
     try {
-      const response = await fetch("http://175.29.21.7:8006/users/");
+      const response = await fetch(`${baseURL}/users/`);
       const users = await response.json();
 
       const currentUser = users.find(user => user.user_id === userId);
@@ -83,7 +83,7 @@ const handleSwitchableCompanyChange = (e) => {
     useEffect(() => {
   const fetchCompanies = async () => {
     try {
-      const response = await fetch("http://175.29.21.7:8006/companies/");
+      const response = await fetch(`${baseURL}/companies/`);
       const data = await response.json();
       if (data.status === "success") {
         setCompanies(data.data);
