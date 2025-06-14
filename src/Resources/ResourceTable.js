@@ -1,19 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import "./ResourceManagement.css";
-import baseURL from "../ApiUrl/Apiurl";
+import baseURL from "../ApiUrl/Apiurl"; 
+import { AuthContext } from "../AuthContext/AuthContext";
+import { useCompany } from "../AuthContext/CompanyContext";
 
 const ResourceTable = ({ onAdd }) => {
   const [resources, setResources] = useState([]);
+   const { userId, userRole } = useContext(AuthContext);
   const [filteredResources, setFilteredResources] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
+    const { selectedCompany } = useCompany();
 
   // Fetch data from API
-  useEffect(() => {
+useEffect(() => {
     const fetchResources = async () => {
       try {
-        const response = await fetch(`${baseURL}/resources/`);
+        if (!selectedCompany || !userId) return;
+
+        const response = await fetch(
+          `${baseURL}/resources/?company_id=${selectedCompany}&user_id=${userId}`
+        );
+
         const result = await response.json();
         if (result.status === "success" && Array.isArray(result.data)) {
           const sortedData = result.data.sort(
@@ -30,7 +39,8 @@ const ResourceTable = ({ onAdd }) => {
     };
 
     fetchResources();
-  }, []);
+  }, [userId, selectedCompany]);
+
 
   useEffect(() => {
     const filtered = resources.filter((res) =>
@@ -99,6 +109,7 @@ const ResourceTable = ({ onAdd }) => {
             <tr>
               <th>S.No</th>
               <th>Resource ID</th>
+               <th>Company</th>
               <th>Full Name</th>
               <th>Mobile</th>
               <th>Email</th>
@@ -116,6 +127,7 @@ const ResourceTable = ({ onAdd }) => {
                 <tr key={res.resource_id}>
                   <td>{indexOfFirstEntry + index + 1}</td>
                   <td>{res.resource_id}</td>
+                    <td>{res.company}</td>
                   <td>{res.full_name}</td>
                   <td>{res.mobile_no}</td>
                   <td>{res.email}</td>

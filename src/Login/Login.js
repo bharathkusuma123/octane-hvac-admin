@@ -37,6 +37,7 @@ const AdminLogin = () => {
       const response = await axios.post(`${baseURL}/user-login/`, {
         username,
         password,
+        fcm_token: "123"
       });
 
       const user = response.data.data;

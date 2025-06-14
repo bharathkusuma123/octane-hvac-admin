@@ -3,15 +3,16 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../Logos/hvac-logo-new.jpg";
 import baseURL from "../ApiUrl/Apiurl";
+import { useCompany } from "../AuthContext/CompanyContext";
 
 const TopNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const userRole = localStorage.getItem("userRole");
   const userId = localStorage.getItem("userId");
-
+ const { selectedCompany, updateCompany } = useCompany();
   const [userData, setUserData] = useState(null);
-  const [selectedCompany, setSelectedCompany] = useState("");
+  // const [selectedCompany, setSelectedCompany] = useState("");
 
   const handleLogout = () => {
     localStorage.removeItem("userRole");
@@ -19,9 +20,9 @@ const TopNavbar = () => {
     navigate("/");
   };
 
-  useEffect(() => {
+useEffect(() => {
     if (userRole === "Admin" && userId) {
-      fetch(`${baseURL}users/`)
+      fetch(`${baseURL}/users/`)
         .then((res) => res.json())
         .then((data) => {
           const matchedUser = Array.isArray(data)
@@ -31,7 +32,9 @@ const TopNavbar = () => {
           if (matchedUser) {
             setUserData(matchedUser);
             const storedCompany = localStorage.getItem("selectedCompany");
-            setSelectedCompany(storedCompany || matchedUser.default_company);
+            if (!storedCompany) {
+              updateCompany(matchedUser.default_company);
+            }
           }
         })
         .catch((err) => console.error("Failed to load user data", err));
@@ -48,9 +51,7 @@ const TopNavbar = () => {
   ];
 
   const handleCompanyChange = (e) => {
-    const company = e.target.value;
-    setSelectedCompany(company);
-    localStorage.setItem("selectedCompany", company);
+    updateCompany(e.target.value);
   };
 
   return (
@@ -73,11 +74,11 @@ const TopNavbar = () => {
 
           {userData && (
             <select
-              className="form-select ms-3"
-              value={selectedCompany}
-              onChange={handleCompanyChange}
-              style={{ minWidth: "150px" }}
-            >
+        className="form-select ms-3"
+        value={selectedCompany}
+        onChange={handleCompanyChange}
+        style={{ minWidth: "150px" }}
+      >
               <option value={userData.default_company}>
                 {userData.default_company}
               </option>
