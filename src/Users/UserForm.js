@@ -36,8 +36,22 @@ useEffect(() => {
       const users = await response.json();
 
       const currentUser = users.find(user => user.user_id === userId);
-      if (currentUser && currentUser.companies) {
-        setLoggedUserCompanies(currentUser.companies);
+      if (currentUser) {
+        let companiesList = currentUser.companies || [];
+
+        // Include default_company if it's not already in the list
+        if (
+          currentUser.default_company &&
+          !companiesList.includes(currentUser.default_company)
+        ) {
+          companiesList = [...companiesList, currentUser.default_company];
+        }
+
+        setLoggedUserCompanies(companiesList);
+        setFormData(prev => ({
+          ...prev,
+          default_company: currentUser.default_company || ""
+        }));
       }
     } catch (error) {
       console.error("Error fetching user companies:", error);
@@ -46,6 +60,8 @@ useEffect(() => {
 
   fetchUserCompanies();
 }, [userId]);
+
+
 
 
 
@@ -297,6 +313,7 @@ const handleSwitchableCompanyChange = (e) => {
     <label className="form-label">Select Companies</label>
     <select
       multiple
+      style={{ height: "100px" }}
       className="form-control"
       value={formData.companies} // ✅ this now reflects selected companies
       onChange={handleSwitchableCompanyChange}
