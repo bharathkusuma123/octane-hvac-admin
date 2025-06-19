@@ -9,23 +9,31 @@ const UserTable = ({ onAdd }) => {
   const [entriesPerPage, setEntriesPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    fetch(`${baseURL}/users/`)
-      .then((response) => {
-        if (!response.ok) throw new Error("Failed to fetch users");
-        return response.json();
-      })
-      .then((data) => {
-        const sortedData = data.sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        );
-        setUsers(sortedData);
-        setFilteredUsers(sortedData);
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-      });
-  }, []);
+useEffect(() => {
+  fetch(`${baseURL}/users/`)
+    .then((response) => {
+      if (!response.ok) throw new Error("Failed to fetch users");
+      return response.json();
+    })
+    .then((data) => {
+      // Filter only required roles
+      const filteredRoles = data.filter(user =>
+        ["Service Manager", "Service Engineer", "Customer"].includes(user.role)
+      );
+
+      // Sort by created_at in descending order
+      const sortedData = filteredRoles.sort(
+        (a, b) => new Date(b.created_at) - new Date(a.created_at)
+      );
+
+      setUsers(sortedData);
+      setFilteredUsers(sortedData);
+    })
+    .catch((error) => {
+      console.error("Error fetching user data:", error);
+    });
+}, []);
+
 
   useEffect(() => {
     const filtered = users.filter((user) =>
