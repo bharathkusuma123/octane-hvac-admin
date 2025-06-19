@@ -2,7 +2,9 @@ import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import baseURL from "../ApiUrl/Apiurl";
 import { AuthContext } from "../AuthContext/AuthContext";
-
+import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const UserForm = ({ onCancel, onSave }) => {
   const { userId, userRole } = useContext(AuthContext);
   const [formData, setFormData] = useState({
@@ -26,7 +28,9 @@ const UserForm = ({ onCancel, onSave }) => {
   });
 const [companies, setCompanies] = useState([]);
 const [loggedUserCompanies, setLoggedUserCompanies] = useState([]);
-
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showLastPassword, setShowLastPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
 useEffect(() => {
@@ -55,6 +59,8 @@ useEffect(() => {
       }
     } catch (error) {
       console.error("Error fetching user companies:", error);
+      toast.error("Failed to load user company data");
+
     }
   };
 
@@ -96,38 +102,51 @@ const handleSwitchableCompanyChange = (e) => {
   };
 
 
-    useEffect(() => {
-  const fetchCompanies = async () => {
-    try {
-      const response = await fetch(`${baseURL}/companies/`);
-      const data = await response.json();
-      if (data.status === "success") {
-        setCompanies(data.data);
+   useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const response = await fetch(`${baseURL}/companies/`);
+        const data = await response.json();
+        if (data.status === "success") {
+          setCompanies(data.data);
+        } else {
+          toast.error("Failed to load companies");
+        }
+      } catch (error) {
+        console.error("Error fetching companies:", error);
+        toast.error("Error loading companies");
       }
-    } catch (error) {
-      console.error("Error fetching companies:", error);
-    }
-  };
+    };
+
 
   fetchCompanies();
 }, []);
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     const generateUserId = async () => {
-      const response = await fetch(`${baseURL}/users/`);
-      const users = await response.json();
+      try {
+        const response = await fetch(`${baseURL}/users/`);
+        const users = await response.json();
 
-      const userIds = users.map(u => u.user_id).filter(id => /^USRID\d+$/.test(id));
-      const numbers = userIds.map(id => parseInt(id.replace('USRID', ''), 10));
-      const max = Math.max(...numbers, 0);
-      const newId = `USRID${(max + 1).toString().padStart(4, '0')}`;
-
-      return newId;
+        const userIds = users.map(u => u.user_id).filter(id => /^USRID\d+$/.test(id));
+        const numbers = userIds.map(id => parseInt(id.replace('USRID', ''), 10));
+        const max = Math.max(...numbers, 0);
+        return `USRID${(max + 1).toString().padStart(4, '0')}`;
+      } catch (error) {
+        console.error("Error generating user ID:", error);
+        toast.error("Failed to generate user ID");
+        return null;
+      }
     };
 
     const user_id = await generateUserId();
+    if (!user_id) {
+      setIsSubmitting(false);
+      return;
+    }
 
     const safeTrim = (val) => (val && typeof val === "string" ? val.trim() : "");
 
@@ -145,19 +164,12 @@ const handleSwitchableCompanyChange = (e) => {
       last_password: formData.last_password || null,
       password: formData.current_password || null,
       status: formData.status || "Active",
-      // hourly_rate: formData.hourly_rate ? parseFloat(formData.hourly_rate) : 0,
-      // security_question1: formData.security_question1 || null,
-      // answer1: safeTrim(formData.answer1) || null,
-      // security_question2: formData.security_question2 || null,
-      // answer2: safeTrim(formData.answer2) || null,
       remarks: safeTrim(formData.remarks) || null,
       created_by: userId,
       updated_by: userId,
-       default_company: formData.default_company || null,
-  companies: formData.companies || [],
+      default_company: formData.default_company || null,
+      companies: formData.companies || [],
     };
-
-    console.log("Sending payload", payload);
 
     try {
       const response = await fetch(`${baseURL}/users/`, {
@@ -170,14 +182,23 @@ const handleSwitchableCompanyChange = (e) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        alert(`Failed: ${response.status} - ${JSON.stringify(errorData)}`);
+        toast.error(`Failed to save user: ${errorData.message || 'Unknown error'}`, {
+          autoClose: 5000,
+        });
         return;
       }
 
-      alert("User saved successfully!");
-      onSave();
+      toast.success('User saved successfully!', {
+        autoClose: 3000,
+        onClose: onSave
+      });
     } catch (error) {
-      alert("Error while saving user: " + error.message);
+      console.error("Error submitting form:", error);
+      toast.error('An error occurred. Please try again later.', {
+        autoClose: 5000,
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -187,6 +208,17 @@ const handleSwitchableCompanyChange = (e) => {
 
 
     <div className="container mt-4 service-request-form">
+       <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <div className="card">
         <div className="card-header">
           <h5 className="mb-1">User Management</h5>
@@ -399,31 +431,50 @@ const handleSwitchableCompanyChange = (e) => {
             </div>
 
             {/* Account Settings */}
+          {/* Account Settings */}
             <div className="row g-3 mb-4">
               <h5>Account Settings</h5>
               <div className="col-md-4">
                 <label className="form-label">Password</label>
-                <input
-                  type="password"
-                  name="current_password"
-                  className="form-control"
-                  placeholder="Enter password"
-                  value={formData.current_password}
-                  onChange={handleChange}
-                  required
-                />
+                <div className="input-group">
+                  <input
+                    type={showCurrentPassword ? "text" : "password"}
+                    name="current_password"
+                    className="form-control"
+                    placeholder="Enter password"
+                    value={formData.current_password}
+                    onChange={handleChange}
+                    required
+                  />
+                  <button
+                    className="btn btn-outline-secondary"
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  >
+                    {showCurrentPassword ? <EyeSlashFill /> : <EyeFill />}
+                  </button>
+                </div>
               </div>
               <div className="col-md-4">
                 <label className="form-label">Confirm Password</label>
-                <input
-                  type="password"
-                  name="last_password"
-                  className="form-control"
-                  placeholder="Confirm password"
-                  value={formData.last_password}
-                  onChange={handleChange}
-                  required
-                />
+                <div className="input-group">
+                  <input
+                    type={showLastPassword ? "text" : "password"}
+                    name="last_password"
+                    className="form-control"
+                    placeholder="Confirm password"
+                    value={formData.last_password}
+                    onChange={handleChange}
+                    required
+                  />
+                  <button
+                    className="btn btn-outline-secondary"
+                    type="button"
+                    onClick={() => setShowLastPassword(!showLastPassword)}
+                  >
+                    {showLastPassword ? <EyeSlashFill /> : <EyeFill />}
+                  </button>
+                </div>
               </div>
               <div className="col-md-4">
                 <label className="form-label">Status</label>
@@ -462,14 +513,25 @@ const handleSwitchableCompanyChange = (e) => {
             </div>
 
             {/* Buttons */}
+                     {/* Buttons */}
             <div className="d-flex justify-content-center mt-3 gap-3">
-              <button type="submit" className="submit-btn">
-                Save User
+              <button 
+                type="submit" 
+                className="submit-btn"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Saving User...' : 'Save User'}
               </button>
-              <button type="button" className="btn btn-secondary" onClick={onCancel}>
+              <button 
+                type="button" 
+                className="btn btn-secondary" 
+                onClick={onCancel}
+                disabled={isSubmitting}
+              >
                 Cancel
               </button>
             </div>
+
           </form>
         </div>
       </div>

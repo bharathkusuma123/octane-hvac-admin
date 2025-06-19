@@ -20,8 +20,8 @@ const Product = () => {
   // Called after save to close form, refresh table, and alert user
   const handleSave = () => {
     setFormVisible(false);
-    setRefreshFlag((prev) => !prev); // toggle to refresh product table
-    alert(editProductId ? "Product updated successfully!" : "Product added successfully!");
+    setRefreshFlag((prev) => !prev); 
+    // alert(editProductId ? "Product updated successfully!" : "Product added successfully!");
   };
 
   return isFormVisible ? (
