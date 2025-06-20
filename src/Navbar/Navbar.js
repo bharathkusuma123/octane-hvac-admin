@@ -17,6 +17,7 @@ const TopNavbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("userRole");
     localStorage.removeItem("userId");
+      localStorage.removeItem("selectedCompany");
     navigate("/");
   };
 
