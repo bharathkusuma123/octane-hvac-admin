@@ -161,6 +161,7 @@ const handleDelete = async (resourceId) => {
             <tr>
               <th>S.No</th>
               <th>Resource ID</th>
+              <th>user ID</th>
                <th>Company</th>
               <th>Full Name</th>
               <th>Mobile</th>
@@ -180,6 +181,7 @@ const handleDelete = async (resourceId) => {
                 <tr key={res.resource_id}>
                   <td>{indexOfFirstEntry + index + 1}</td>
                   <td>{res.resource_id}</td>
+                  <td>{res.user}</td>
                     <td>{res.company}</td>
                   <td>{res.full_name}</td>
                   <td>{res.mobile_no}</td>
