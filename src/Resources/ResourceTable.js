@@ -3,8 +3,10 @@ import "./ResourceManagement.css";
 import baseURL from "../ApiUrl/Apiurl"; 
 import { AuthContext } from "../AuthContext/AuthContext";
 import { useCompany } from "../AuthContext/CompanyContext";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import axios from "axios";
 
-const ResourceTable = ({ onAdd }) => {
+const ResourceTable = ({ onAdd, onEdit  }) => { 
   const [resources, setResources] = useState([]);
    const { userId, userRole } = useContext(AuthContext);
   const [filteredResources, setFilteredResources] = useState([]);
@@ -14,7 +16,6 @@ const ResourceTable = ({ onAdd }) => {
     const { selectedCompany } = useCompany();
 
   // Fetch data from API
-useEffect(() => {
     const fetchResources = async () => {
       try {
         if (!selectedCompany || !userId) return;
@@ -38,6 +39,8 @@ useEffect(() => {
       }
     };
 
+
+useEffect(() => {
     fetchResources();
   }, [userId, selectedCompany]);
 
@@ -53,7 +56,56 @@ useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, resources]);
 
+const handleDelete = async (resourceId) => {
+  if (!window.confirm('Are you sure you want to delete this resource?')) {
+    return;
+  }
 
+  try {
+    console.log('Attempting to delete resource:', resourceId);
+    console.log('Current user ID:', userId);
+    console.log('Selected company ID:', selectedCompany);
+
+    // First option: Try with query parameters
+    const deleteUrl = `${baseURL}/resources/${resourceId}/?user_id=${userId}&company_id=${selectedCompany}`;
+    console.log('DELETE URL:', deleteUrl);
+
+    const response = await axios.delete(deleteUrl, {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    console.log('Delete response:', response);
+
+    if (response.status === 200 || response.status === 204) {
+      console.log('Resource deleted successfully');
+      fetchResources();
+      alert('Resource deleted successfully');
+    } else {
+      console.warn('Unexpected response status:', response.status);
+      alert('Failed to delete resource: Unexpected response');
+    }
+  } catch (error) {
+    console.error('Detailed delete error:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      config: error.config
+    });
+
+    let errorMessage = 'Error deleting resource';
+    if (error.response) {
+      errorMessage += `: ${error.response.status} - ${error.response.data?.message || 'No additional details'}`;
+    } else if (error.request) {
+      errorMessage += ': No response received from server';
+    } else {
+      errorMessage += `: ${error.message}`;
+    }
+
+    alert(errorMessage);
+  }
+};
 
    const formatDate = (dateString) => {
     if (!dateString) return '-';
@@ -119,6 +171,7 @@ useEffect(() => {
               <th>Updated At</th>
               <th>Created By</th>
               <th>Updated By</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -145,6 +198,18 @@ useEffect(() => {
                   <td>{formatDate(new Date(res.updated_at).toLocaleString())}</td>
                   <td>{res.created_by}</td>
                   <td>{res.updated_by}</td>
+                  <td>
+                    <FaEdit 
+          className="text-primary me-2" 
+          role="button" 
+          onClick={() => onEdit(res)}  // Add onClick handler
+        />
+                    <FaTrash 
+          className="text-danger" 
+          role="button" 
+          onClick={() => handleDelete(res.resource_id)} 
+        />
+      </td>
                 </tr>
               ))
             ) : (
