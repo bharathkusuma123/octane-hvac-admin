@@ -10,6 +10,8 @@ import Products from "./Products/Product(HVACdevices)";
 import ResourceManagement from "./Resources/ResourceManagement";
 import UserManagement from "./Users/UserManagement";
 import ProtectedRoute from "./Navbar/ProtectedRoute";
+import ComponentView from "./Components/ComponentView"; // adjust path accordingly
+import ProductView from "./Products/ProductView";
 
 function App() {
   return (
@@ -25,6 +27,11 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+            <Route path="/components/view/:component_id" element={              <ProtectedRoute>
+
+              <ComponentView /> </ProtectedRoute>
+              } />
           <Route
             path="/admin/products"
             element={
@@ -33,6 +40,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          
           <Route
             path="/admin/resource-management"
             element={

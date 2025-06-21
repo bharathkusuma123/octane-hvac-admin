@@ -1,0 +1,84 @@
+.service-request-formview table {
+  font-size: 0.95rem;
+}
+
+.service-request-formview .table th {
+  width: 25%;
+  background-color: #f5f7fa;
+  font-weight: 600;
+  color: #333;
+}
+
+.service-request-formview .table td {
+  background-color: #ffffff;
+  color: #555;
+}
+
+.service-request-formview .card-header {
+  color: white;
+  background-color: #0096D6;
+}
+
+.service-request-formview .card-header h5 {
+  font-weight: bold;
+  color: white;
+}
+
+.service-request-formview .card-header .btn-light {
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.85rem;
+  background-color: #f8f9fa;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.service-request-formview .card-header .btn-light:hover {
+  background-color: #e2e6ea;
+}
+
+/* Loading spinner styles */
+.text-center {
+  text-align: center;
+}
+
+.my-5 {
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.spinner-border {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  vertical-align: text-bottom;
+  border: 0.25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.text-primary {
+  color: #0d6efd;
+}
+
+/* Alert styles */
+.alert {
+  position: relative;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}

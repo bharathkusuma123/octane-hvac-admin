@@ -172,7 +172,7 @@ const handleDelete = async (resourceId) => {
               <th>Updated At</th>
               <th>Created By</th>
               <th>Updated By</th>
-              <th>Actions</th>
+              {/* <th>Actions</th> */}
             </tr>
           </thead>
           <tbody>
@@ -200,7 +200,7 @@ const handleDelete = async (resourceId) => {
                   <td>{formatDate(new Date(res.updated_at).toLocaleString())}</td>
                   <td>{res.created_by}</td>
                   <td>{res.updated_by}</td>
-                  <td>
+                  {/* <td>
                     <FaEdit 
           className="text-primary me-2" 
           role="button" 
@@ -211,7 +211,7 @@ const handleDelete = async (resourceId) => {
           role="button" 
           onClick={() => handleDelete(res.resource_id)} 
         />
-      </td>
+      </td> */}
                 </tr>
               ))
             ) : (
