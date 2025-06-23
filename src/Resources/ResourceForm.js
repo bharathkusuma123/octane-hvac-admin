@@ -394,8 +394,7 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import baseURL from "../ApiUrl/Apiurl";
 import { AuthContext } from "../AuthContext/AuthContext";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Swal from "sweetalert2";
 
 const ResourceForm = ({ onCancel, onSave }) => {
   const { userId, userRole } = useContext(AuthContext);
@@ -422,7 +421,12 @@ const ResourceForm = ({ onCancel, onSave }) => {
         setEngineers(filtered);
       } catch (error) {
         console.error("Error fetching users:", error);
-        toast.error("Failed to load engineers list");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to load engineers list",
+          confirmButtonColor: "#d33",
+        });
       }
     };
     fetchEngineers();
@@ -454,7 +458,12 @@ const ResourceForm = ({ onCancel, onSave }) => {
     const selectedCompany = localStorage.getItem("selectedCompany");
 
     if (!formData.resourceId || !selectedCompany) {
-      toast.error("Please select both an engineer and a company");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Please select both an engineer and a company",
+        confirmButtonColor: "#d33",
+      });
       setIsSubmitting(false);
       return;
     }
@@ -480,20 +489,23 @@ const ResourceForm = ({ onCancel, onSave }) => {
         payload
       );
       
-      toast.success("Resource saved successfully!", {
-        autoClose: 3000,
-        onClose: onSave
-      });
-      
-      // Reset form after successful submission
-      setFormData({
-        resourceId: "",
-        engineerId: "",
-        fullName: "",
-        phone: "",
-        email: "",
-        status: "Active",
-        hourlyRate: "",
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "Resource saved successfully!",
+        confirmButtonColor: "#3085d6",
+      }).then(() => {
+        // Reset form after successful submission
+        setFormData({
+          resourceId: "",
+          engineerId: "",
+          fullName: "",
+          phone: "",
+          email: "",
+          status: "Active",
+          hourlyRate: "",
+        });
+        if (onSave) onSave();
       });
       
     } catch (error) {
@@ -502,8 +514,11 @@ const ResourceForm = ({ onCancel, onSave }) => {
                           error.response?.data?.error || 
                           error.message || 
                           "Failed to save resource";
-      toast.error(errorMessage, {
-        autoClose: 5000,
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: errorMessage,
+        confirmButtonColor: "#d33",
       });
     } finally {
       setIsSubmitting(false);
@@ -512,17 +527,6 @@ const ResourceForm = ({ onCancel, onSave }) => {
 
   return (
     <div className="container mt-4 service-request-form">
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
       <div className="card">
         <div className="card-header">
           <h5 className="mb-1">Resource Management</h5>

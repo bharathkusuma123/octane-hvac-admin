@@ -155,8 +155,7 @@ import React, { useEffect, useState, useContext } from "react";
 import "./Component.css";
 import baseURL from "../ApiUrl/Apiurl";
 import { AuthContext } from "../AuthContext/AuthContext";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Swal from "sweetalert2";
 
 const ComponentForm = ({ onCancel, onSave, initialData = {} }) => {
   const isEditMode = !!initialData?.component_id;
@@ -222,15 +221,22 @@ const ComponentForm = ({ onCancel, onSave, initialData = {} }) => {
         throw new Error(errorData.message || 'Failed to process request');
       }
 
-      toast.success(`Component ${isEditMode ? "updated" : "created"} successfully!`, {
-        autoClose: 3000,
-        onClose: onSave
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: `Component ${isEditMode ? "updated" : "created"} successfully!`,
+        confirmButtonColor: "#3085d6",
+      }).then(() => {
+        if (onSave) onSave();
       });
 
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error(error.message || `Failed to ${isEditMode ? "update" : "create"} component`, {
-        autoClose: 5000,
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.message || `Failed to ${isEditMode ? "update" : "create"} component`,
+        confirmButtonColor: "#d33",
       });
     } finally {
       setIsSubmitting(false);
@@ -239,17 +245,6 @@ const ComponentForm = ({ onCancel, onSave, initialData = {} }) => {
 
   return (
     <div className="container mt-4 service-request-form">
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
       <div className="card">
         <div className="card-header">
           <h5 className="mb-1">{isEditMode ? "Edit Component" : "Add Component"}</h5>

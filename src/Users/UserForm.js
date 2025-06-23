@@ -3,8 +3,8 @@ import axios from "axios";
 import baseURL from "../ApiUrl/Apiurl";
 import { AuthContext } from "../AuthContext/AuthContext";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Swal from "sweetalert2";
+
 const UserForm = ({ onCancel, onSave }) => {
   const { userId, userRole } = useContext(AuthContext);
   const [formData, setFormData] = useState({
@@ -24,52 +24,47 @@ const UserForm = ({ onCancel, onSave }) => {
     default_company: "",
     switch_company_allowed: false,
     companies: [], 
-    
   });
-const [companies, setCompanies] = useState([]);
-const [loggedUserCompanies, setLoggedUserCompanies] = useState([]);
+
+  const [companies, setCompanies] = useState([]);
+  const [loggedUserCompanies, setLoggedUserCompanies] = useState([]);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showLastPassword, setShowLastPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    const fetchUserCompanies = async () => {
+      try {
+        const response = await fetch(`${baseURL}/users/`);
+        const users = await response.json();
 
-useEffect(() => {
-  const fetchUserCompanies = async () => {
-    try {
-      const response = await fetch(`${baseURL}/users/`);
-      const users = await response.json();
+        const currentUser = users.find(user => user.user_id === userId);
+        if (currentUser) {
+          let companiesList = currentUser.companies || [];
 
-      const currentUser = users.find(user => user.user_id === userId);
-      if (currentUser) {
-        let companiesList = currentUser.companies || [];
+          if (currentUser.default_company && !companiesList.includes(currentUser.default_company)) {
+            companiesList = [...companiesList, currentUser.default_company];
+          }
 
-        // Include default_company if it's not already in the list
-        if (
-          currentUser.default_company &&
-          !companiesList.includes(currentUser.default_company)
-        ) {
-          companiesList = [...companiesList, currentUser.default_company];
+          setLoggedUserCompanies(companiesList);
+          setFormData(prev => ({
+            ...prev,
+            default_company: currentUser.default_company || ""
+          }));
         }
-
-        setLoggedUserCompanies(companiesList);
-        setFormData(prev => ({
-          ...prev,
-          default_company: currentUser.default_company || ""
-        }));
+      } catch (error) {
+        console.error("Error fetching user companies:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to load user company data",
+          confirmButtonColor: "#d33",
+        });
       }
-    } catch (error) {
-      console.error("Error fetching user companies:", error);
-      toast.error("Failed to load user company data");
+    };
 
-    }
-  };
-
-  fetchUserCompanies();
-}, [userId]);
-
-
-
-
+    fetchUserCompanies();
+  }, [userId]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -79,30 +74,28 @@ useEffect(() => {
     }));
   };
 
-const handleSwitchChange = (e) => {
-  const isAllowed = e.target.value === "true";
-  setFormData(prev => ({
-    ...prev,
-    switch_company_allowed: isAllowed,
-    switchable_companies: isAllowed ? prev.switchable_companies : [] // reset if "No"
-  }));
-};
+  const handleSwitchChange = (e) => {
+    const isAllowed = e.target.value === "true";
+    setFormData(prev => ({
+      ...prev,
+      switch_company_allowed: isAllowed,
+      companies: isAllowed ? prev.companies : []
+    }));
+  };
 
-const handleSwitchableCompanyChange = (e) => {
-  const selected = Array.from(e.target.selectedOptions, (option) => option.value);
-  setFormData((prevFormData) => ({
-    ...prevFormData,
-    companies: selected, // ✅ store in formData.companies
-  }));
-};
-
+  const handleSwitchableCompanyChange = (e) => {
+    const selected = Array.from(e.target.selectedOptions, (option) => option.value);
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      companies: selected,
+    }));
+  };
 
   const handleStatusChange = (e) => {
     setFormData((prev) => ({ ...prev, status: e.target.value }));
   };
 
-
-   useEffect(() => {
+  useEffect(() => {
     const fetchCompanies = async () => {
       try {
         const response = await fetch(`${baseURL}/companies/`);
@@ -110,19 +103,28 @@ const handleSwitchableCompanyChange = (e) => {
         if (data.status === "success") {
           setCompanies(data.data);
         } else {
-          toast.error("Failed to load companies");
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to load companies",
+            confirmButtonColor: "#d33",
+          });
         }
       } catch (error) {
         console.error("Error fetching companies:", error);
-        toast.error("Error loading companies");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Error loading companies",
+          confirmButtonColor: "#d33",
+        });
       }
     };
 
+    fetchCompanies();
+  }, []);
 
-  fetchCompanies();
-}, []);
-
- const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
@@ -137,7 +139,12 @@ const handleSwitchableCompanyChange = (e) => {
         return `USRID${(max + 1).toString().padStart(4, '0')}`;
       } catch (error) {
         console.error("Error generating user ID:", error);
-        toast.error("Failed to generate user ID");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to generate user ID",
+          confirmButtonColor: "#d33",
+        });
         return null;
       }
     };
@@ -182,20 +189,30 @@ const handleSwitchableCompanyChange = (e) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        toast.error(`Failed to save user: ${errorData.message || 'Unknown error'}`, {
-          autoClose: 5000,
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: `Failed to save user: ${errorData.message || 'Unknown error'}`,
+          confirmButtonColor: "#d33",
         });
         return;
       }
 
-      toast.success('User saved successfully!', {
-        autoClose: 3000,
-        onClose: onSave
+      Swal.fire({
+        icon: "success",
+        title: "Success!",
+        text: "User saved successfully!",
+        confirmButtonColor: "#3085d6",
+      }).then(() => {
+        if (onSave) onSave();
       });
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error('An error occurred. Please try again later.', {
-        autoClose: 5000,
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "An error occurred. Please try again later.",
+        confirmButtonColor: "#d33",
       });
     } finally {
       setIsSubmitting(false);
@@ -203,32 +220,16 @@ const handleSwitchableCompanyChange = (e) => {
   };
 
   return (
-
-   
-
-
     <div className="container mt-4 service-request-form">
-       <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
       <div className="card">
         <div className="card-header">
           <h5 className="mb-1">User Management</h5>
           <h6 className="text" style={{ color: "white" }}>
             Add, view and manage user accounts
           </h6>
-      <h6 className="text" style={{ color: "white" }}>
-  Logged in as: <strong>{userId},{userRole}</strong>
-</h6>
-
+          <h6 className="text" style={{ color: "white" }}>
+            Logged in as: <strong>{userId},{userRole}</strong>
+          </h6>
         </div>
         <div className="card-body">
           <form onSubmit={handleSubmit}>
@@ -286,84 +287,76 @@ const handleSwitchableCompanyChange = (e) => {
                 </select>
               </div>
 
-
               <div className="col-md-4">
-            <label className="form-label">Default Company</label>
-            <select
-  name="default_company"
-  className="form-control"
-  value={formData.default_company}
-  onChange={handleChange}
-  required
->
-  <option value="">Select a company</option>
-  {companies
-    .filter(company => loggedUserCompanies.includes(company.company_id))
-    .map(company => (
-      <option key={company.company_id} value={company.company_id}>
-        {company.company_name} -  {company.company_id}
-      </option>
-    ))}
-</select>
+                <label className="form-label">Default Company</label>
+                <select
+                  name="default_company"
+                  className="form-control"
+                  value={formData.default_company}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select a company</option>
+                  {companies
+                    .filter(company => loggedUserCompanies.includes(company.company_id))
+                    .map(company => (
+                      <option key={company.company_id} value={company.company_id}>
+                        {company.company_name} - {company.company_id}
+                      </option>
+                    ))}
+                </select>
+              </div>
 
-          </div>
-
-
-          <div className="col-md-4 mt-2">
-  <label className="form-label">Switch Company</label>
-  <div className="d-flex gap-3">
-    <div className="form-check form-check-inline">
-      <input
-        className="form-check-input"
-        type="radio"
-        name="switch_company_allowed"
-        value="true"
-        checked={formData.switch_company_allowed === true}
-        onChange={handleSwitchChange}
-      />
-      <label className="form-check-label">Yes</label>
-    </div>
-    <div className="form-check form-check-inline">
-      <input
-        className="form-check-input"
-        type="radio"
-        name="switch_company_allowed"
-        value="false"
-        checked={formData.switch_company_allowed === false}
-        onChange={handleSwitchChange}
-      />
-      <label className="form-check-label">No</label>
-    </div>
-  </div>
-</div>
-
+              <div className="col-md-4 mt-2">
+                <label className="form-label">Switch Company</label>
+                <div className="d-flex gap-3">
+                  <div className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="switch_company_allowed"
+                      value="true"
+                      checked={formData.switch_company_allowed === true}
+                      onChange={handleSwitchChange}
+                    />
+                    <label className="form-check-label">Yes</label>
+                  </div>
+                  <div className="form-check form-check-inline">
+                    <input
+                      className="form-check-input"
+                      type="radio"
+                      name="switch_company_allowed"
+                      value="false"
+                      checked={formData.switch_company_allowed === false}
+                      onChange={handleSwitchChange}
+                    />
+                    <label className="form-check-label">No</label>
+                  </div>
+                </div>
+              </div>
             </div>
 
-
-{formData.switch_company_allowed && (
-  <div className="col-md-4 mt-2">
-    <label className="form-label">Select Companies</label>
-    <select
-      multiple
-      style={{ height: "100px" }}
-      className="form-control"
-      value={formData.companies} // ✅ this now reflects selected companies
-      onChange={handleSwitchableCompanyChange}
-    >
-      {loggedUserCompanies.map((companyId) => {
-        const company = companies.find((c) => c.company_id === companyId);
-        return (
-          <option key={companyId} value={companyId}>
-            {companyId} - {company?.company_name || "Unknown"}
-          </option>
-        );
-      })}
-    </select>
-  </div>
-)}
-
-
-
+            {formData.switch_company_allowed && (
+              <div className="col-md-4 mt-2">
+                <label className="form-label">Select Companies</label>
+                <select
+                  multiple
+                  style={{ height: "100px" }}
+                  className="form-control"
+                  value={formData.companies}
+                  onChange={handleSwitchableCompanyChange}
+                >
+                  {loggedUserCompanies.map((companyId) => {
+                    const company = companies.find((c) => c.company_id === companyId);
+                    return (
+                      <option key={companyId} value={companyId}>
+                        {companyId} - {company?.company_name || "Unknown"}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
+            )}
 
             {/* Contact Information */}
             <div className="row g-3 mb-4">
@@ -431,7 +424,6 @@ const handleSwitchableCompanyChange = (e) => {
             </div>
 
             {/* Account Settings */}
-          {/* Account Settings */}
             <div className="row g-3 mb-4">
               <h5>Account Settings</h5>
               <div className="col-md-4">
@@ -513,7 +505,6 @@ const handleSwitchableCompanyChange = (e) => {
             </div>
 
             {/* Buttons */}
-                     {/* Buttons */}
             <div className="d-flex justify-content-center mt-3 gap-3">
               <button 
                 type="submit" 
@@ -531,12 +522,10 @@ const handleSwitchableCompanyChange = (e) => {
                 Cancel
               </button>
             </div>
-
           </form>
         </div>
       </div>
     </div>
-    
   );
 };
 

@@ -240,8 +240,7 @@ import "./Product.css";
 import axios from "axios";
 import baseURL from "../ApiUrl/Apiurl";
 import { AuthContext } from "../AuthContext/AuthContext";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Swal from "sweetalert2";
 
 const ProductForm = ({ onCancel, onSave, productId }) => {
   const { userId, userRole } = useContext(AuthContext);
@@ -269,8 +268,11 @@ const ProductForm = ({ onCancel, onSave, productId }) => {
           });
         } catch (err) {
           console.error("Error fetching product:", err);
-          toast.error("Failed to load product data. Please try again.", {
-            autoClose: 5000,
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to load product data. Please try again.",
+            confirmButtonColor: "#d33",
           });
         }
       };
@@ -300,25 +302,36 @@ const ProductForm = ({ onCancel, onSave, productId }) => {
         await axios.put(`${baseURL}/products/${productId}/`, payload, {
           headers: { "Content-Type": "application/json" }
         });
-        toast.success("Product updated successfully!", {
-          autoClose: 3000,
-          onClose: onSave
+        Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "Product updated successfully!",
+          confirmButtonColor: "#3085d6",
+        }).then(() => {
+          if (onSave) onSave();
         });
       } else {
         await axios.post(`${baseURL}/products/`, payload, {
           headers: { "Content-Type": "application/json" }
         });
-        toast.success("Product created successfully!", {
-          autoClose: 3000,
-          onClose: onSave
+        Swal.fire({
+          icon: "success",
+          title: "Success!",
+          text: "Product created successfully!",
+          confirmButtonColor: "#3085d6",
+        }).then(() => {
+          if (onSave) onSave();
         });
       }
     } catch (err) {
       console.error("Error saving product:", err);
       const errorMessage = err.response?.data?.message || 
                          "Failed to save product. Please try again.";
-      toast.error(errorMessage, {
-        autoClose: 5000,
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: errorMessage,
+        confirmButtonColor: "#d33",
       });
     } finally {
       setIsSubmitting(false);
@@ -327,17 +340,6 @@ const ProductForm = ({ onCancel, onSave, productId }) => {
 
   return (
     <div className="container mt-4 service-request-form">
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
       <div className="card">
         <div className="card-header">
           <h5 className="mb-1">{productId ? "Edit Product" : "Add Product"}</h5>
