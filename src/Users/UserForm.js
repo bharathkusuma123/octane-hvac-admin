@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 const UserForm = ({ onCancel, onSave }) => {
   const { userId, userRole } = useContext(AuthContext);
   const [formData, setFormData] = useState({
+    user_id: "",
     username: "",
     full_name: "",
     email: "",
@@ -128,37 +129,10 @@ const UserForm = ({ onCancel, onSave }) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const generateUserId = async () => {
-      try {
-        const response = await fetch(`${baseURL}/users/`);
-        const users = await response.json();
-
-        const userIds = users.map(u => u.user_id).filter(id => /^USRID\d+$/.test(id));
-        const numbers = userIds.map(id => parseInt(id.replace('USRID', ''), 10));
-        const max = Math.max(...numbers, 0);
-        return `USRID${(max + 1).toString().padStart(4, '0')}`;
-      } catch (error) {
-        console.error("Error generating user ID:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Failed to generate user ID",
-          confirmButtonColor: "#d33",
-        });
-        return null;
-      }
-    };
-
-    const user_id = await generateUserId();
-    if (!user_id) {
-      setIsSubmitting(false);
-      return;
-    }
-
     const safeTrim = (val) => (val && typeof val === "string" ? val.trim() : "");
 
     const payload = {
-      user_id,
+      user_id: safeTrim(formData.user_id),
       username: safeTrim(formData.username) || null,
       full_name: safeTrim(formData.full_name) || null,
       email: safeTrim(formData.email) || null,
@@ -236,6 +210,19 @@ const UserForm = ({ onCancel, onSave }) => {
             {/* Basic Information */}
             <div className="row g-3 mb-4">
               <h5>Basic Information</h5>
+
+                <div className="col-md-4">
+                <label className="form-label">Username</label>
+                <input
+                  type="text"
+                  name="user_id"
+                  className="form-control"
+                  placeholder="Enter username"
+                  value={formData.user_id}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
               <div className="col-md-4">
                 <label className="form-label">Username</label>
                 <input
@@ -260,18 +247,7 @@ const UserForm = ({ onCancel, onSave }) => {
                   required
                 />
               </div>
-              <div className="col-md-4">
-                <label className="form-label">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  className="form-control"
-                  placeholder="user@example.com"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+              
               <div className="col-md-4">
                 <label className="form-label">Role</label>
                 <select
@@ -361,6 +337,19 @@ const UserForm = ({ onCancel, onSave }) => {
             {/* Contact Information */}
             <div className="row g-3 mb-4">
               <h5>Contact Information</h5>
+
+              <div className="col-md-4">
+                <label className="form-label">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  className="form-control"
+                  placeholder="user@example.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
               <div className="col-md-4">
                 <label className="form-label">Mobile</label>
                 <input
