@@ -259,3 +259,34 @@
   font-weight: 500;
   margin-bottom: 5px;
 }
+
+
+
+
+
+
+
+
+.action-icons {
+  display: flex;
+  gap: 10px;
+  align-items: left;
+  justify-content: left ;
+}
+
+.action-icon {
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.view-icon {
+  color: #0dcaf0;
+}
+
+.edit-icon {
+  color: #0d6efd;
+}
+
+.delete-icon {
+  color: #dc3545;
+}

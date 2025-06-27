@@ -110,32 +110,35 @@ const ComponentTable = ({ onAdd, onEdit, onDelete }) => {
                   <td>{component.component_id}</td>
                   <td>{component.component_name}</td>
                   <td>{component.component_description}</td>
-                  <td style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                    <FaEye
-                      title="View"
-                      onClick={() => navigate(`/components/view/${component.component_id}`)}
-                      style={{ color: "#0dcaf0", cursor: "pointer", fontSize: "1.2rem" }}
-                    />
-                    <FaEdit
-                      title="Edit"
-                      onClick={() => onEdit(component.component_id)}
-                      style={{ color: "#0d6efd", cursor: "pointer", fontSize: "1.2rem" }}
-                    />
-                    <FaTrash
-                      title="Delete"
-                      onClick={async () => {
-                        try {
-                          await onDelete(component.component_id);
-                          setComponents(prev =>
-                            prev.filter(c => c.component_id !== component.component_id)
-                          );
-                        } catch (error) {
-                          console.error("Failed to delete component:", error);
-                        }
-                      }}
-                      style={{ color: "#dc3545", cursor: "pointer", fontSize: "1.2rem" }}
-                    />
-                  </td>
+                 <td>
+  <div className="action-icons">
+    <FaEye
+      title="View"
+      onClick={() => navigate(`/components/view/${component.component_id}`)}
+      className="action-icon view-icon"
+    />
+    <FaEdit
+      title="Edit"
+      onClick={() => onEdit(component.component_id)}
+      className="action-icon edit-icon"
+    />
+    <FaTrash
+      title="Delete"
+      onClick={async () => {
+        try {
+          await onDelete(component.component_id);
+          setComponents(prev =>
+            prev.filter(c => c.component_id !== component.component_id)
+          );
+        } catch (error) {
+          console.error("Failed to delete component:", error);
+        }
+      }}
+      className="action-icon delete-icon"
+    />
+  </div>
+</td>
+
                 </tr>
               ))
             ) : (

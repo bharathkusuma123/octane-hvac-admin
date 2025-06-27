@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./UserManagement.css";
 import baseURL from "../ApiUrl/Apiurl";
+import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 
 const UserTable = ({ onAdd }) => {
   const [users, setUsers] = useState([]);
@@ -119,6 +120,7 @@ useEffect(() => {
               <th>Default Company</th>
               <th>Accessible Companies</th>
               <th>Created At</th>
+                 <th>Actions</th> 
             </tr>
           </thead>
           <tbody>
@@ -147,6 +149,26 @@ useEffect(() => {
                   <td>{user.default_company}</td>
                  <td>{Array.isArray(user.companies) ? user.companies.join(", ") : user.companies}</td>
                   <td>{formatDate(new Date(user.created_at).toLocaleString())}</td>
+                  <td>
+  <div className="action-icons">
+    <FaEye
+      title="View"
+      onClick={() => console.log("View", user.user_id)} // Replace with your view handler
+      className="action-icon view-icon"
+    />
+    <FaEdit
+      title="Edit"
+      onClick={() => console.log("Edit", user)} // Replace with your edit handler
+      className="action-icon edit-icon"
+    />
+    <FaTrash
+      title="Delete"
+      onClick={() => console.log("Delete", user.user_id)} // Replace with your delete handler
+      className="action-icon delete-icon"
+    />
+  </div>
+</td>
+
                 </tr>
               ))
             ) : (
