@@ -212,12 +212,12 @@ const UserForm = ({ onCancel, onSave }) => {
               <h5>Basic Information</h5>
 
                 <div className="col-md-4">
-                <label className="form-label">Username</label>
+                <label className="form-label">User Id</label>
                 <input
                   type="text"
                   name="user_id"
                   className="form-control"
-                  placeholder="Enter username"
+                  placeholder="Enter userId"
                   value={formData.user_id}
                   onChange={handleChange}
                   required
