@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import "./UserManagement.css";
 import baseURL from "../ApiUrl/Apiurl";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import Swal from 'sweetalert2';
 
-const UserTable = ({ onAdd }) => {
+const UserTable = ({ onAdd, onEdit  }) => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -56,6 +57,37 @@ useEffect(() => {
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
+  };
+
+  const handleDelete = async (userId) => {
+    const confirmed = await Swal.fire({
+      title: "Are you sure?",
+      text: `You are about to delete user ID: ${userId}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (confirmed.isConfirmed) {
+      try {
+        const response = await fetch(`${baseURL}/users/${userId}/`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) throw new Error("Delete failed");
+
+        Swal.fire("Deleted!", "User has been deleted.", "success");
+
+        const updatedUsers = users.filter((u) => u.user_id !== userId);
+        setUsers(updatedUsers);
+        setFilteredUsers(updatedUsers);
+      } catch (error) {
+        console.error("Delete error:", error);
+        Swal.fire("Error", "Failed to delete user", "error");
+      }
+    }
   };
 
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -151,21 +183,17 @@ useEffect(() => {
                   <td>{formatDate(new Date(user.created_at).toLocaleString())}</td>
                   <td>
   <div className="action-icons">
-    <FaEye
-      title="View"
-      onClick={() => console.log("View", user.user_id)} // Replace with your view handler
-      className="action-icon view-icon"
-    />
-    <FaEdit
-      title="Edit"
-      onClick={() => console.log("Edit", user)} // Replace with your edit handler
-      className="action-icon edit-icon"
-    />
-    <FaTrash
-      title="Delete"
-      onClick={() => console.log("Delete", user.user_id)} // Replace with your delete handler
-      className="action-icon delete-icon"
-    />
+   
+   <FaEdit
+  title="Edit"
+  onClick={() => onEdit(user)}
+  className="action-icon edit-icon"
+/>
+<FaTrash
+  title="Delete"
+  onClick={() => handleDelete(user.user_id)}
+  className="action-icon delete-icon"
+/>
   </div>
 </td>
 
