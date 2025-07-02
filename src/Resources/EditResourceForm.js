@@ -145,7 +145,7 @@ const EditResourceForm = ({ resource, onCancel, onUpdate }) => {
                   className="form-control"
                   value={formData.engineerId}
                   onChange={handleChange}
-                  required
+                  disabled
                 >
                   <option value="">Select Engineer</option>
                   {engineers.map((eng) => (
