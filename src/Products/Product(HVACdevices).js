@@ -1,37 +1,41 @@
+
+
 import React, { useState } from "react";
 import ProductForm from "./ProductForm";
 import ProductTable from "./ProductTable";
 
 const Product = () => {
   const [isFormVisible, setFormVisible] = useState(false);
-  const [editProductId, setEditProductId] = useState(null);
-  const [refreshFlag, setRefreshFlag] = useState(false); // for reloading products in table
+  const [currentProduct, setCurrentProduct] = useState(null); // Store the entire product object
+  const [refreshFlag, setRefreshFlag] = useState(false);
 
   const handleAdd = () => {
-    setEditProductId(null);
+    setCurrentProduct(null);
     setFormVisible(true);
   };
 
-  const handleEdit = (productId) => {
-    setEditProductId(productId);
+  const handleEdit = (product) => {
+    setCurrentProduct(product); // Store the product data
     setFormVisible(true);
   };
 
-  // Called after save to close form, refresh table, and alert user
   const handleSave = () => {
     setFormVisible(false);
-    setRefreshFlag((prev) => !prev); 
-    // alert(editProductId ? "Product updated successfully!" : "Product added successfully!");
+    setRefreshFlag((prev) => !prev);
   };
 
   return isFormVisible ? (
     <ProductForm
-      productId={editProductId}
+      product={currentProduct} // Pass the product data
       onCancel={() => setFormVisible(false)}
       onSave={handleSave}
     />
   ) : (
-    <ProductTable onAdd={handleAdd} onEdit={handleEdit} refreshFlag={refreshFlag} />
+    <ProductTable 
+      onAdd={handleAdd} 
+      onEdit={handleEdit} 
+      refreshFlag={refreshFlag} 
+    />
   );
 };
 

@@ -5,7 +5,7 @@ import { AuthContext } from "../AuthContext/AuthContext";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 import Swal from "sweetalert2";
 
-const UserForm = ({ onCancel, onSave }) => {
+const UserForm = ({ onCancel, onSave, initialData  }) => {
   const { userId, userRole } = useContext(AuthContext);
   const [formData, setFormData] = useState({
     user_id: "",
@@ -32,6 +32,30 @@ const UserForm = ({ onCancel, onSave }) => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showLastPassword, setShowLastPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+    // Initialize form with initialData if it exists (edit mode)
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        user_id: initialData.user_id || "",
+        username: initialData.username || "",
+        full_name: initialData.full_name || "",
+        email: initialData.email || "",
+        role: initialData.role || "",
+        mobile: initialData.mobile || "",
+        telephone: initialData.telephone || "",
+        city: initialData.city || "",
+        country_code: initialData.country_code || "",
+        address: initialData.address || "",
+        current_password: "", // Don't pre-fill passwords
+        last_password: "", // Don't pre-fill passwords
+        status: initialData.status || "Active",
+        remarks: initialData.remarks || "",
+        default_company: initialData.default_company || "",
+        switch_company_allowed: initialData.switch_company_allowed || false,
+        companies: Array.isArray(initialData.companies) ? initialData.companies : [],
+      });
+    }
+  }, [initialData]);
 
   useEffect(() => {
     const fetchUserCompanies = async () => {
@@ -125,7 +149,7 @@ const UserForm = ({ onCancel, onSave }) => {
     fetchCompanies();
   }, []);
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
@@ -146,15 +170,29 @@ const UserForm = ({ onCancel, onSave }) => {
       password: formData.current_password || null,
       status: formData.status || "Active",
       remarks: safeTrim(formData.remarks) || null,
-      created_by: userId,
       updated_by: userId,
       default_company: formData.default_company || null,
       companies: formData.companies || [],
     };
 
     try {
-      const response = await fetch(`${baseURL}/users/`, {
-        method: "POST",
+      const url = initialData 
+        ? `${baseURL}/users/${initialData.user_id}/` // PUT for update
+        : `${baseURL}/users/`; // POST for create
+
+      const method = initialData ? "PUT" : "POST";
+
+      // For updates, don't send password fields if they're empty
+      if (initialData) {
+        if (!payload.password) delete payload.password;
+        if (!payload.last_password) delete payload.last_password;
+        payload.created_by = initialData.created_by; // Preserve original creator
+      } else {
+        payload.created_by = userId;
+      }
+
+      const response = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
         },
@@ -163,19 +201,13 @@ const UserForm = ({ onCancel, onSave }) => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: `Failed to save user: ${errorData.message || 'Unknown error'}`,
-          confirmButtonColor: "#d33",
-        });
-        return;
+        throw new Error(errorData.message || 'Failed to save user');
       }
 
       Swal.fire({
         icon: "success",
         title: "Success!",
-        text: "User saved successfully!",
+        text: initialData ? "User updated successfully!" : "User created successfully!",
         confirmButtonColor: "#3085d6",
       }).then(() => {
         if (onSave) onSave();
@@ -185,13 +217,14 @@ const UserForm = ({ onCancel, onSave }) => {
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: "An error occurred. Please try again later.",
+        text: error.message || "An error occurred. Please try again later.",
         confirmButtonColor: "#d33",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <div className="container mt-4 service-request-form">
@@ -221,6 +254,8 @@ const UserForm = ({ onCancel, onSave }) => {
                   value={formData.user_id}
                   onChange={handleChange}
                   required
+                      disabled={!!initialData}
+
                 />
               </div>
               <div className="col-md-4">
@@ -412,70 +447,98 @@ const UserForm = ({ onCancel, onSave }) => {
               </div>
             </div>
 
-            {/* Account Settings */}
-            <div className="row g-3 mb-4">
-              <h5>Account Settings</h5>
-              <div className="col-md-4">
-                <label className="form-label">Password</label>
-                <div className="input-group">
-                  <input
-                    type={showCurrentPassword ? "text" : "password"}
-                    name="current_password"
-                    className="form-control"
-                    placeholder="Enter password"
-                    value={formData.current_password}
-                    onChange={handleChange}
-                    required
-                  />
-                  <button
-                    className="btn btn-outline-secondary"
-                    type="button"
-                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                  >
-                    {showCurrentPassword ? <EyeSlashFill /> : <EyeFill />}
-                  </button>
-                </div>
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">Confirm Password</label>
-                <div className="input-group">
-                  <input
-                    type={showLastPassword ? "text" : "password"}
-                    name="last_password"
-                    className="form-control"
-                    placeholder="Confirm password"
-                    value={formData.last_password}
-                    onChange={handleChange}
-                    required
-                  />
-                  <button
-                    className="btn btn-outline-secondary"
-                    type="button"
-                    onClick={() => setShowLastPassword(!showLastPassword)}
-                  >
-                    {showLastPassword ? <EyeSlashFill /> : <EyeFill />}
-                  </button>
-                </div>
-              </div>
-              <div className="col-md-4">
-                <label className="form-label">Status</label>
-                <div className="d-flex gap-3">
-                  {["Active", "Inactive", "Blocked"].map((s) => (
-                    <div key={s} className="form-check form-check-inline">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="status"
-                        value={s}
-                        checked={formData.status === s}
-                        onChange={handleStatusChange}
-                      />
-                      <label className="form-check-label">{s}</label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+           {/* Account Settings */}
+{!initialData && (
+  <div className="row g-3 mb-4">
+    <h5>Account Settings</h5>
+    <div className="col-md-4">
+      <label className="form-label">Password</label>
+      <div className="input-group">
+        <input
+          type={showCurrentPassword ? "text" : "password"}
+          name="current_password"
+          className="form-control"
+          placeholder="Enter password"
+          value={formData.current_password}
+          onChange={handleChange}
+          required
+        />
+        <button
+          className="btn btn-outline-secondary"
+          type="button"
+          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+        >
+          {showCurrentPassword ? <EyeSlashFill /> : <EyeFill />}
+        </button>
+      </div>
+    </div>
+    <div className="col-md-4">
+      <label className="form-label">Confirm Password</label>
+      <div className="input-group">
+        <input
+          type={showLastPassword ? "text" : "password"}
+          name="last_password"
+          className="form-control"
+          placeholder="Confirm password"
+          value={formData.last_password}
+          onChange={handleChange}
+          required
+        />
+        <button
+          className="btn btn-outline-secondary"
+          type="button"
+          onClick={() => setShowLastPassword(!showLastPassword)}
+        >
+          {showLastPassword ? <EyeSlashFill /> : <EyeFill />}
+        </button>
+      </div>
+    </div>
+    <div className="col-md-4">
+      <label className="form-label">Status</label>
+      <div className="d-flex gap-3">
+        {["Active", "Inactive", "Blocked"].map((s) => (
+          <div key={s} className="form-check form-check-inline">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="status"
+              value={s}
+              checked={formData.status === s}
+              onChange={handleStatusChange}
+            />
+            <label className="form-check-label">{s}</label>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
+{/* Always show Status even if editing */}
+{initialData && (
+  <div className="row g-3 mb-4">
+    <h5>Account Settings</h5>
+    <div className="col-md-4">
+      <label className="form-label">Status</label>
+      <div className="d-flex gap-3">
+        {["Active", "Inactive", "Blocked"].map((s) => (
+          <div key={s} className="form-check form-check-inline">
+            <input
+              className="form-check-input"
+              type="radio"
+              name="status"
+              value={s}
+              checked={formData.status === s}
+              onChange={handleStatusChange}
+            />
+            <label className="form-check-label">{s}</label>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
 
             {/* Additional Notes */}
             <div className="row g-3 mb-4">

@@ -277,6 +277,11 @@ const ProductTable = ({ onAdd, onEdit, refreshFlag }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+const handleEdit = (product) => {
+    // Pass the entire product object to the onEdit handler
+    onEdit(product);
+  };
+  
   const fetchProducts = async () => {
     setLoading(true);
     try {
@@ -467,12 +472,12 @@ const ProductTable = ({ onAdd, onEdit, refreshFlag }) => {
                     <td>{product.updated_by || "-"}</td>
                     <td>
                       <div className="d-flex">
-                        <FaEdit
-                          className="text-primary me-2 action-icon"
-                          style={{ cursor: "pointer" }}
-                          title="Edit"
-                          onClick={() => onEdit(product.product_id)}
-                        />
+                         <FaEdit
+    className="text-primary me-2 action-icon"
+    style={{ cursor: "pointer" }}
+    title="Edit"
+    onClick={() => handleEdit(product)} // Pass the whole product object
+  />
                         <FaTrash
                           className="text-danger action-icon"
                           style={{ cursor: "pointer" }}
