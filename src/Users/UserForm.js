@@ -91,22 +91,24 @@ const UserForm = ({ onCancel, onSave, initialData  }) => {
     fetchUserCompanies();
   }, [userId]);
 
-  const handleChange = (e) => {
-    const { name, value, type } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "number" ? value.trim() : value,
-    }));
-  };
+const handleChange = (e) => {
+  const { name, value, type } = e.target;
+  setFormData((prev) => ({
+    ...prev,
+    [name]: type === "number" ? value.trim() : value,
+  }));
+};
 
-  const handleSwitchChange = (e) => {
-    const isAllowed = e.target.value === "true";
-    setFormData(prev => ({
-      ...prev,
-      switch_company_allowed: isAllowed,
-      companies: isAllowed ? prev.companies : []
-    }));
-  };
+
+const handleSwitchChange = (e) => {
+  const isAllowed = e.target.value === "true";
+  setFormData(prev => ({
+    ...prev,
+    switch_company_allowed: isAllowed,
+    companies: isAllowed ? prev.companies : []
+  }));
+};
+
 
   const handleSwitchableCompanyChange = (e) => {
     const selected = Array.from(e.target.selectedOptions, (option) => option.value);
@@ -173,6 +175,7 @@ const UserForm = ({ onCancel, onSave, initialData  }) => {
       updated_by: userId,
       default_company: formData.default_company || null,
       companies: formData.companies || [],
+       switch_company_allowed: formData.switch_company_allowed,
     };
 
     try {
