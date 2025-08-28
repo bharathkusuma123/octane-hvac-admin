@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import baseURL from "../ApiUrl/Apiurl";
 import { AuthContext } from "../AuthContext/AuthContext";
+import Swal from 'sweetalert2';
 
 const EditResourceForm = ({ resource, onCancel, onUpdate }) => {
   const { userId, userRole } = useContext(AuthContext);
@@ -66,43 +67,65 @@ const EditResourceForm = ({ resource, onCancel, onUpdate }) => {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  const selectedCompany = localStorage.getItem("selectedCompany");
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const selectedCompany = localStorage.getItem("selectedCompany");
-
-    // Validate required fields
-    // if (!formData.resourceId || !selectedCompany || !resource?.id) {
-    //   alert("Please fill all required fields");
-    //   return;
-    // }
-
-    const payload = {
-      resource_id: formData.resourceId,
-      full_name: formData.fullName,
-      mobile_no: formData.phone,
-      email: formData.email,
-      hourly_rate: formData.hourlyRate,
-      status: formData.status,
-      updated_by: "Admin", // Or use the actual user name from context
-      user: formData.engineerId,
-      user_id: userId,
-      company: selectedCompany,
-      company_id: selectedCompany
-    };
-
-    try {
-      const response = await axios.put(
-        `${baseURL}/resources/${resource.resource_id}/`,
-        payload
-      );
-      console.log("Resource updated successfully:", response.data);
-      onUpdate();
-    } catch (error) {
-      console.error("Failed to update resource:", error);
-      alert("Failed to update resource. Please try again.");
-    }
+  const payload = {
+    resource_id: formData.resourceId,
+    full_name: formData.fullName,
+    mobile_no: formData.phone,
+    email: formData.email,
+    hourly_rate: formData.hourlyRate,
+    status: formData.status,
+    updated_by: "Admin",
+    user: formData.engineerId,
+    user_id: userId,
+    company: selectedCompany,
+    company_id: selectedCompany
   };
+
+  try {
+    // Show loading alert
+    // Swal.fire({
+    //   title: 'Updating...',
+    //   // text: 'Please wait while the resource is being updated.',
+    //   allowOutsideClick: false,
+    //   didOpen: () => {
+    //     Swal.showLoading();
+    //   }
+    // });
+
+    const response = await axios.put(
+      `${baseURL}/resources/${resource.resource_id}/`,
+      payload
+    );
+
+    Swal.close(); // Close loading
+
+    Swal.fire({
+      icon: 'success',
+      title: 'Updated!',
+      text: 'Resource updated successfully.',
+      confirmButtonColor: '#3085d6',
+    });
+
+    onUpdate();
+  } catch (error) {
+    Swal.close(); // Close loading
+    console.error("Failed to update resource:", error);
+
+    Swal.fire({
+      icon: 'error',
+      title: 'Update Failed',
+      text:
+        error.response?.data?.message ||
+        'Failed to update resource. Please try again.',
+      confirmButtonColor: '#3085d6',
+    });
+  }
+};
+
 
   if (isLoading) {
     return <div>Loading...</div>;

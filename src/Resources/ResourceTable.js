@@ -5,6 +5,7 @@ import { AuthContext } from "../AuthContext/AuthContext";
 import { useCompany } from "../AuthContext/CompanyContext";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import axios from "axios";
+import Swal from 'sweetalert2';
 
 const ResourceTable = ({ onAdd, onEdit  }) => { 
   const [resources, setResources] = useState([]);
@@ -57,42 +58,45 @@ useEffect(() => {
   }, [searchTerm, resources]);
 
 const handleDelete = async (resourceId) => {
-  if (!window.confirm('Are you sure you want to delete this resource?')) {
-    return;
-  }
+  const result = await Swal.fire({
+    title: 'Are you sure?',
+    text: "You won't be able to revert this!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, delete it!'
+  });
+
+  if (!result.isConfirmed) return;
 
   try {
-    console.log('Attempting to delete resource:', resourceId);
-    console.log('Current user ID:', userId);
-    console.log('Selected company ID:', selectedCompany);
-
-    // First option: Try with query parameters
     const deleteUrl = `${baseURL}/resources/${resourceId}/?user_id=${userId}&company_id=${selectedCompany}`;
-    console.log('DELETE URL:', deleteUrl);
-
+    
     const response = await axios.delete(deleteUrl, {
       headers: {
         'Content-Type': 'application/json',
       }
     });
 
-    console.log('Delete response:', response);
-
     if (response.status === 200 || response.status === 204) {
-      console.log('Resource deleted successfully');
-      fetchResources();
-      alert('Resource deleted successfully');
+      await fetchResources();
+      Swal.fire({
+        icon: 'success',
+        title: 'Deleted!',
+        text: 'Resource has been deleted.',
+        confirmButtonColor: '#3085d6',
+      });
     } else {
-      console.warn('Unexpected response status:', response.status);
-      alert('Failed to delete resource: Unexpected response');
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed!',
+        text: `Unexpected response: ${response.status}`,
+        confirmButtonColor: '#3085d6',
+      });
     }
   } catch (error) {
-    console.error('Detailed delete error:', {
-      message: error.message,
-      response: error.response?.data,
-      status: error.response?.status,
-      config: error.config
-    });
+    console.error('Delete error details:', error);
 
     let errorMessage = 'Error deleting resource';
     if (error.response) {
@@ -103,9 +107,15 @@ const handleDelete = async (resourceId) => {
       errorMessage += `: ${error.message}`;
     }
 
-    alert(errorMessage);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: errorMessage,
+      confirmButtonColor: '#3085d6',
+    });
   }
 };
+
 
    const formatDate = (dateString) => {
     if (!dateString) return '-';
