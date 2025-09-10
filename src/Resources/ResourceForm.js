@@ -90,6 +90,7 @@ const ResourceForm = ({ onCancel, onSave }) => {
       company: selectedCompany,
       company_id: selectedCompany
     };
+    console.log("Submitting payload:", JSON.stringify(payload, null, 2));
 
     try {
       const response = await axios.post(
