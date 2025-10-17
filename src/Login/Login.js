@@ -18,7 +18,6 @@ const AdminLogin = () => {
   useEffect(() => {
     console.log("Effect triggered with:", { submitted, userRole });
 
-    // ✅ Use correct case for userRole
     if (submitted && userRole === "Admin") {
       console.log("Effect: Navigating to /admin/component");
       navigate("/admin/component");
@@ -46,7 +45,13 @@ const AdminLogin = () => {
 
       if (user.role === "Admin") {
         console.log("Admin verified. Logging in...");
-        login(user.role, user.user_id);
+        
+        // Store credentials in localStorage
+        localStorage.setItem("username", username);
+        localStorage.setItem("password", password);
+        
+        // Login with username as userId - this is the key fix
+        login(user.role, user.user_id); // Using username as the userId value
         setSubmitted(true); // triggers the useEffect
       } else {
         setError("User is not an Admin");

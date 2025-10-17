@@ -150,7 +150,6 @@
 // export default ComponentForm;
 
 
-
 import React, { useEffect, useState, useContext } from "react";
 import "./Component.css";
 import baseURL from "../ApiUrl/Apiurl";
@@ -166,6 +165,35 @@ const ComponentForm = ({ onCancel, onSave, initialData = {} }) => {
     component_description: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [username, setUsername] = useState(""); // State to store fetched username
+
+  // Fetch user details from API
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        // Get userId from localStorage
+        const storedUserId = localStorage.getItem("userId") || "USRA1";
+        
+        const response = await fetch(`http://175.29.21.7:8006/users/${storedUserId}/`);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch user details');
+        }
+        
+        const userData = await response.json();
+        
+        if (userData.status === "success" && userData.data) {
+          setUsername(userData.data.username); // Set the username from API response
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+        // Fallback to userId if username fetch fails
+        setUsername(userId);
+      }
+    };
+
+    fetchUserDetails();
+  }, [userId]);
 
   useEffect(() => {
     if (isEditMode && initialData) {
@@ -197,8 +225,8 @@ const ComponentForm = ({ onCancel, onSave, initialData = {} }) => {
       ...formState,
       created_at: isEditMode ? initialData.created_at : timestamp,
       updated_at: timestamp,
-      created_by: isEditMode ? initialData.created_by : userId,
-      updated_by: userId,
+      created_by: isEditMode ? initialData.created_by : username, // Use fetched username
+      updated_by: username, // Use fetched username
     };
 
     const url = isEditMode
@@ -252,7 +280,7 @@ const ComponentForm = ({ onCancel, onSave, initialData = {} }) => {
             Fill in component details below
           </h6>
           <h6 className="text" style={{ color: "white" }}>
-            Logged in as: <strong>{userId},{userRole}</strong>
+            Logged in as: <strong>{username || "Loading..."}, {userRole}</strong>
           </h6>
         </div>
         <div className="card-body">
