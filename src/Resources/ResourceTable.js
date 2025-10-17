@@ -117,14 +117,21 @@ const handleDelete = async (resourceId) => {
 };
 
 
-   const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
+  const formatDateTime = (dateString) => {
+  if (!dateString) return '-';
+  const date = new Date(dateString);
+
+  return date.toLocaleString('en-IN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    // second: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Kolkata'
+  });
+}; 
 
 
   const indexOfLastEntry = currentPage * entriesPerPage;
@@ -206,8 +213,8 @@ const handleDelete = async (resourceId) => {
                     </span>
                   </td>
                   <td>{res.hourly_rate}</td>
-                  <td>{formatDate(new Date(res.created_at).toLocaleString())}</td>
-                  <td>{formatDate(new Date(res.updated_at).toLocaleString())}</td>
+                  <td>{formatDateTime(res.created_at)}</td>
+                  <td>{formatDateTime(res.updated_at)}</td>
                   <td>{res.created_by}</td>
                   <td>{res.updated_by}</td>
                   <td>

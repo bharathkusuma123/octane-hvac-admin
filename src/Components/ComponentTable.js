@@ -269,20 +269,22 @@ const ComponentTable = ({ onAdd, onEdit }) => {
     setCurrentPage(1);
   }, [searchTerm, components]);
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
+ const formatDateTime = (dateString) => {
+  if (!dateString) return '-';
+  const date = new Date(dateString);
 
-  const formatDateTime = (dateString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return date.toLocaleString();
-  };
+  return date.toLocaleString('en-IN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    // second: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Kolkata'
+  });
+};
+
 
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;

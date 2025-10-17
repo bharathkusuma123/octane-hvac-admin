@@ -371,14 +371,21 @@ const handleEdit = (product) => {
   const currentProducts = filteredProducts.slice(indexOfFirstEntry, indexOfLastEntry);
   const totalPages = Math.ceil(filteredProducts.length / entriesPerPage);
 
-  const formatDate = (dateString) => {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
+  const formatDateTime = (dateString) => {
+  if (!dateString) return '-';
+  const date = new Date(dateString);
+
+  return date.toLocaleString('en-IN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    // second: '2-digit',
+    hour12: false,
+    timeZone: 'Asia/Kolkata'
+  });
+};
 
   if (loading) {
     return (
@@ -466,8 +473,8 @@ const handleEdit = (product) => {
                     <td>{product.product_id}</td>
                     <td>{product.product_name}</td>
                     <td>{product.product_description || "-"}</td>
-                    <td>{formatDate(product.created_at)}</td>
-                    <td>{formatDate(product.updated_at)}</td>
+                    <td>{formatDateTime(product.created_at)}</td>
+                    <td>{formatDateTime(product.updated_at)}</td>
                     <td>{product.created_by || "-"}</td>
                     <td>{product.updated_by || "-"}</td>
                     <td>
