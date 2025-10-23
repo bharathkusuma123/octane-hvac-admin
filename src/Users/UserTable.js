@@ -1,3 +1,240 @@
+// import React, { useEffect, useState } from "react";
+// import "./UserManagement.css";
+// import baseURL from "../ApiUrl/Apiurl";
+// import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+// import Swal from 'sweetalert2';
+
+// const UserTable = ({ onAdd, onEdit  }) => {
+//   const [users, setUsers] = useState([]);
+//   const [filteredUsers, setFilteredUsers] = useState([]);
+//   const [searchTerm, setSearchTerm] = useState("");
+//   const [entriesPerPage, setEntriesPerPage] = useState(5);
+//   const [currentPage, setCurrentPage] = useState(1);
+
+// useEffect(() => {
+//   fetch(`${baseURL}/users/`)
+//     .then((response) => {
+//       if (!response.ok) throw new Error("Failed to fetch users");
+//       return response.json();
+//     })
+//     .then((data) => {
+//       // Filter only required roles
+//       const filteredRoles = data.filter(user =>
+//         ["Service Manager", "Service Engineer", "Customer"].includes(user.role)
+//       );
+
+//       // Sort by created_at in descending order
+//       const sortedData = filteredRoles.sort(
+//         (a, b) => new Date(b.created_at) - new Date(a.created_at)
+//       );
+
+//       setUsers(sortedData);
+//       setFilteredUsers(sortedData);
+//     })
+//     .catch((error) => {
+//       console.error("Error fetching user data:", error);
+//     });
+// }, []);
+
+
+//   useEffect(() => {
+//     const filtered = users.filter((user) =>
+//       Object.values(user)
+//         .join(" ")
+//         .toLowerCase()
+//         .includes(searchTerm.toLowerCase())
+//     );
+//     setFilteredUsers(filtered);
+//     setCurrentPage(1); // Reset to first page on search
+//   }, [searchTerm, users]);
+
+
+
+//     const formatDate = (dateString) => {
+//     if (!dateString) return '-';
+//     const date = new Date(dateString);
+//     const day = date.getDate().toString().padStart(2, '0');
+//     const month = (date.getMonth() + 1).toString().padStart(2, '0');
+//     const year = date.getFullYear();
+//     return `${day}/${month}/${year}`;
+//   };
+
+//   const handleDelete = async (userId) => {
+//     const confirmed = await Swal.fire({
+//       title: "Are you sure?",
+//       text: `You are about to delete user ID: ${userId}`,
+//       icon: "warning",
+//       showCancelButton: true,
+//       confirmButtonColor: "#d33",
+//       cancelButtonColor: "#3085d6",
+//       confirmButtonText: "Yes, delete it!",
+//     });
+
+//     if (confirmed.isConfirmed) {
+//       try {
+//         const response = await fetch(`${baseURL}/users/${userId}/`, {
+//           method: "DELETE",
+//         });
+
+//         if (!response.ok) throw new Error("Delete failed");
+
+//         Swal.fire("Deleted!", "User has been deleted.", "success");
+
+//         const updatedUsers = users.filter((u) => u.user_id !== userId);
+//         setUsers(updatedUsers);
+//         setFilteredUsers(updatedUsers);
+//       } catch (error) {
+//         console.error("Delete error:", error);
+//         Swal.fire("Error", "Failed to delete user", "error");
+//       }
+//     }
+//   };
+
+//   const indexOfLastEntry = currentPage * entriesPerPage;
+//   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+//   const currentUsers = filteredUsers.slice(indexOfFirstEntry, indexOfLastEntry);
+//   const totalPages = Math.ceil(filteredUsers.length / entriesPerPage);
+
+//   return (
+//     <div className="user-management-container">
+//       {/* Header */}
+//       <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+//         <div>
+//           <h2 className="user-management-title mb-0">User Management</h2>
+//           <p className="user-management-subtitle mb-0 text-muted">Manage user records</p>
+//         </div>
+//         <button onClick={onAdd} className="btn btn-primary">
+//           Add New User
+//         </button>
+//       </div>
+
+//       {/* Controls */}
+//       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+//         <div className="d-flex align-items-center gap-2">
+//           Show
+//           <select
+//             value={entriesPerPage}
+//             onChange={(e) => setEntriesPerPage(Number(e.target.value))}
+//             className="form-select form-select-sm w-auto"
+//           >
+//             <option value={5}>5</option>
+//             <option value={10}>10</option>
+//             <option value={25}>25</option>
+//           </select>
+//           entries
+//         </div>
+
+//         <input
+//           type="text"
+//           placeholder="Search users..."
+//           className="form-control w-auto"
+//           value={searchTerm}
+//           onChange={(e) => setSearchTerm(e.target.value)}
+//         />
+//       </div>
+
+//       {/* Table */}
+//       <div className="table-responsive mb-4">
+//         <table className="table ">
+//           <thead className="product-table-header">
+//             <tr>
+//               <th>S.No</th>
+//               <th>User ID</th>
+//               <th>Full Name</th>
+//               <th>Username</th>
+//               <th>Email</th>
+//               <th>Mobile No.</th>
+//               <th>Telephone</th>
+//               <th>City</th>
+//               <th>Country</th>
+//               <th>Status</th>
+//               <th>Role</th>
+//               <th>Default Company</th>
+//               <th>Accessible Companies</th>
+//               <th>Created At</th>
+//                  <th>Actions</th> 
+//             </tr>
+//           </thead>
+//           <tbody>
+//             {currentUsers.length > 0 ? (
+//               currentUsers.map((user, index) => (
+//                 <tr key={index}>
+//                   <td>{indexOfFirstEntry + index + 1}</td>
+//                   <td>{user.user_id}</td>
+//                   <td>{user.full_name}</td>
+//                   <td>{user.username}</td>
+//                   <td>{user.email}</td>
+//                   <td>{user.mobile}</td>
+//                   <td>{user.telephone}</td>
+//                   <td>{user.city}</td>
+//                   <td>{user.country_code}</td>
+//                   <td>
+//                     <span className={`badge ${
+//                       user.status === 'Active' ? 'bg-success' :
+//                       user.status === 'Inactive' ? 'bg-warning text-dark' :
+//                       'bg-danger'
+//                     }`}>
+//                       {user.status}
+//                     </span>
+//                   </td>
+//                   <td>{user.role}</td>
+//                   <td>{user.default_company}</td>
+//                  <td>{Array.isArray(user.companies) ? user.companies.join(", ") : user.companies}</td>
+//                   <td>{formatDate(new Date(user.created_at).toLocaleString())}</td>
+//                   <td>
+//   <div className="action-icons">
+   
+//    <FaEdit
+//   title="Edit"
+//   onClick={() => onEdit(user)}
+//   className="action-icon edit-icon"
+// />
+// <FaTrash
+//   title="Delete"
+//   onClick={() => handleDelete(user.user_id)}
+//   className="action-icon delete-icon"
+// />
+//   </div>
+// </td>
+
+//                 </tr>
+//               ))
+//             ) : (
+//               <tr>
+//                 <td colSpan="13" className="text-center">No users found.</td>
+//               </tr>
+//             )}
+//           </tbody>
+//         </table>
+//       </div>
+
+//       {/* Pagination */}
+//       <div className="pagination-controls d-flex justify-content-center mt-3">
+//         <button
+//           className="btn btn-outline-primary me-2"
+//           disabled={currentPage === 1}
+//           onClick={() => setCurrentPage((prev) => prev - 1)}
+//         >
+//           Previous
+//         </button>
+//         <span className="align-self-center mx-2">
+//           Page {currentPage} of {totalPages}
+//         </span>
+//         <button
+//           className="btn btn-outline-primary ms-2"
+//           disabled={currentPage === totalPages}
+//           onClick={() => setCurrentPage((prev) => prev + 1)}
+//         >
+//           Next
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default UserTable;
+
+
 import React, { useEffect, useState } from "react";
 import "./UserManagement.css";
 import baseURL from "../ApiUrl/Apiurl";
@@ -10,32 +247,75 @@ const UserTable = ({ onAdd, onEdit  }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(5);
   const [currentPage, setCurrentPage] = useState(1);
+  const [companiesData, setCompaniesData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  fetch(`${baseURL}/users/`)
-    .then((response) => {
-      if (!response.ok) throw new Error("Failed to fetch users");
-      return response.json();
-    })
-    .then((data) => {
-      // Filter only required roles
-      const filteredRoles = data.filter(user =>
-        ["Service Manager", "Service Engineer", "Customer"].includes(user.role)
-      );
+  // Fetch companies data
+  const fetchCompanies = async () => {
+    try {
+      const response = await fetch(`${baseURL}/companies/`);
+      const data = await response.json();
+      if (data.status === "success") {
+        setCompaniesData(data.data);
+      }
+    } catch (error) {
+      console.error("Failed to load companies data", error);
+    }
+  };
 
-      // Sort by created_at in descending order
-      const sortedData = filteredRoles.sort(
-        (a, b) => new Date(b.created_at) - new Date(a.created_at)
-      );
+  // Function to get company name only (hide ID)
+  const getCompanyName = (companyId) => {
+    if (!companiesData || companiesData.length === 0) return companyId;
+    
+    const company = companiesData.find(comp => comp.company_id === companyId);
+    return company ? company.company_name : companyId;
+  };
 
-      setUsers(sortedData);
-      setFilteredUsers(sortedData);
-    })
-    .catch((error) => {
-      console.error("Error fetching user data:", error);
-    });
-}, []);
+  // Function to get accessible companies names only
+  const getAccessibleCompaniesDisplay = (companyIds) => {
+    if (!companyIds || !Array.isArray(companyIds)) return '-';
+    
+    if (companiesData.length === 0) {
+      return companyIds.join(", ");
+    }
+    
+    return companyIds.map(companyId => getCompanyName(companyId)).join(", ");
+  };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      
+      // Fetch companies first
+      await fetchCompanies();
+      
+      // Then fetch users
+      try {
+        const response = await fetch(`${baseURL}/users/`);
+        if (!response.ok) throw new Error("Failed to fetch users");
+        const data = await response.json();
+        
+        // Filter only required roles
+        const filteredRoles = data.filter(user =>
+          ["Service Manager", "Service Engineer", "Customer"].includes(user.role)
+        );
+
+        // Sort by created_at in descending order
+        const sortedData = filteredRoles.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+
+        setUsers(sortedData);
+        setFilteredUsers(sortedData);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     const filtered = users.filter((user) =>
@@ -48,9 +328,7 @@ useEffect(() => {
     setCurrentPage(1); // Reset to first page on search
   }, [searchTerm, users]);
 
-
-
-    const formatDate = (dateString) => {
+  const formatDate = (dateString) => {
     if (!dateString) return '-';
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, '0');
@@ -95,6 +373,14 @@ useEffect(() => {
   const currentUsers = filteredUsers.slice(indexOfFirstEntry, indexOfLastEntry);
   const totalPages = Math.ceil(filteredUsers.length / entriesPerPage);
 
+  if (loading) {
+    return (
+      <div className="user-management-container">
+        <div className="text-center my-4">Loading users and companies...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="user-management-container">
       {/* Header */}
@@ -135,7 +421,7 @@ useEffect(() => {
 
       {/* Table */}
       <div className="table-responsive mb-4">
-        <table className="table ">
+        <table className="table">
           <thead className="product-table-header">
             <tr>
               <th>S.No</th>
@@ -152,7 +438,7 @@ useEffect(() => {
               <th>Default Company</th>
               <th>Accessible Companies</th>
               <th>Created At</th>
-                 <th>Actions</th> 
+              <th>Actions</th> 
             </tr>
           </thead>
           <tbody>
@@ -178,30 +464,34 @@ useEffect(() => {
                     </span>
                   </td>
                   <td>{user.role}</td>
-                  <td>{user.default_company}</td>
-                 <td>{Array.isArray(user.companies) ? user.companies.join(", ") : user.companies}</td>
-                  <td>{formatDate(new Date(user.created_at).toLocaleString())}</td>
+                  <td title={getCompanyName(user.default_company)}>
+                    {getCompanyName(user.default_company)}
+                  </td>
+                  <td title={getAccessibleCompaniesDisplay(user.companies)}>
+                    {getAccessibleCompaniesDisplay(user.companies)}
+                  </td>
+                  <td>{formatDate(user.created_at)}</td>
                   <td>
-  <div className="action-icons">
-   
-   <FaEdit
-  title="Edit"
-  onClick={() => onEdit(user)}
-  className="action-icon edit-icon"
-/>
-<FaTrash
-  title="Delete"
-  onClick={() => handleDelete(user.user_id)}
-  className="action-icon delete-icon"
-/>
-  </div>
-</td>
-
+                    <div className="action-icons">
+                      <FaEdit
+                        title="Edit"
+                        onClick={() => onEdit(user)}
+                        className="action-icon edit-icon"
+                      />
+                      <FaTrash
+                        title="Delete"
+                        onClick={() => handleDelete(user.user_id)}
+                        className="action-icon delete-icon"
+                      />
+                    </div>
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="13" className="text-center">No users found.</td>
+                <td colSpan="15" className="text-center">
+                  {searchTerm ? 'No users found matching your search' : 'No users found'}
+                </td>
               </tr>
             )}
           </tbody>
