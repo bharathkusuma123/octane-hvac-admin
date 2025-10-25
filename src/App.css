@@ -15,7 +15,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* max-width: 1200px; */
   margin: 0 auto;
   height: 60px;
 }
@@ -27,6 +26,7 @@
 
 .nav-links {
   display: flex;
+  align-items: center;
   gap: 20px;
 }
 
@@ -46,6 +46,19 @@
   background-color: #3498db;
 }
 
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-greeting {
+  color: white;
+  font-weight: 500;
+  margin-right: 10px;
+  font-size: 14px;
+}
+
 .logout-btn {
   background-color: #e74c3c;
   color: white;
@@ -60,6 +73,22 @@
   background-color: #c0392b;
 }
 
+/* Notification Bell Styles (if you add it later) */
+.notification-bell {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background-color 0.3s;
+  font-size: 18px;
+}
+
+.notification-bell:hover {
+  background-color: #34495e;
+}
+
 /* Panel Content Styles */
 .panel-layout {
   padding-top: 60px; /* To account for fixed navbar */
@@ -69,12 +98,6 @@
   padding: 20px;
   margin: 50px auto;
 }
-
-
-
-
-
-
 
 /* Dropdown Styles */
 .dropdown {
@@ -128,4 +151,25 @@
 
 .dropdown-menu a.active {
   background-color: #3498db;
+}
+
+/* Form Select Styles */
+.form-select {
+  background-color: #34495e;
+  color: white;
+  border: 1px solid #495a6b;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.form-select option {
+  background-color: #2c3e50;
+  color: white;
 }
