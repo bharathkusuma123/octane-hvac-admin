@@ -470,10 +470,11 @@ const ResourceTable = ({ onAdd, onEdit  }) => {
               <th>Email</th>
               <th>Status</th>
               <th>Hourly Rate</th>
+              <th>Average Rating</th>
               <th>Created At</th>
-              <th>Updated At</th>
+              {/* <th>Updated At</th> */}
               <th>Created By</th>
-              <th>Updated By</th>
+              {/* <th>Updated By</th> */}
               <th>Actions</th>
             </tr>
           </thead>
@@ -499,10 +500,11 @@ const ResourceTable = ({ onAdd, onEdit  }) => {
                   </td>
                   {/* <td>{res.hourly_rate}</td> */}
                   <td>﷼ {res.hourly_rate}</td>
+                  <td>{res.average_rating}</td>
                   <td>{formatDateTime(res.created_at)}</td>
-                  <td>{formatDateTime(res.updated_at)}</td>
+                  {/* <td>{formatDateTime(res.updated_at)}</td> */}
                   <td>{getUsername(res.created_by)}</td>
-                  <td>{getUsername(res.updated_by)}</td>
+                  {/* <td>{getUsername(res.updated_by)}</td> */}
                   <td>
                     <FaEdit 
                       className="text-primary me-2" 
