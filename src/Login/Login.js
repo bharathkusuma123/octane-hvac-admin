@@ -10,6 +10,7 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // Added loading state
   const [submitted, setSubmitted] = useState(false);
 
   const { login, userRole } = useContext(AuthContext);
@@ -32,6 +33,9 @@ const AdminLogin = () => {
     console.log("Form submitted");
     console.log("Username:", username);
     console.log("Password:", password);
+    
+    setError(""); // Clear previous errors
+    setLoading(true); // Start loading
 
     try {
       const response = await axios.post(`${baseURL}/user-login/`, {
@@ -53,7 +57,9 @@ const AdminLogin = () => {
       }
     } catch (err) {
       console.error("Login error:", err);
-      setError("Invalid Username or Password");
+      setError(err.response?.data?.message || "Invalid Username or Password");
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -63,6 +69,7 @@ const AdminLogin = () => {
       username={username}
       password={password}
       showPassword={showPassword}
+      loading={loading} // Pass loading state
       setUsername={setUsername}
       setPassword={setPassword}
       setShowPassword={setShowPassword}

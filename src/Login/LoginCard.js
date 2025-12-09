@@ -8,6 +8,7 @@ import {
   Card,
   Alert,
   InputGroup,
+  Spinner,
 } from "react-bootstrap";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 import logo from "../Logos/hvac-logo-new.jpg";
@@ -15,10 +16,11 @@ import "./Login.css"
 
 const LoginCard = ({
   title,
-  username,            // renamed prop
+  username,
   password,
   showPassword,
-  setUsername,         // renamed setter
+  loading, // Added loading prop
+  setUsername,
   setPassword,
   setShowPassword,
   handleSubmit,
@@ -51,6 +53,7 @@ const LoginCard = ({
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
+                      disabled={loading} // Disable during loading
                     />
                   </Form.Group>
 
@@ -63,10 +66,12 @@ const LoginCard = ({
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
+                        disabled={loading} // Disable during loading
                       />
                       <Button
                         variant="outline-secondary"
                         onClick={() => setShowPassword(!showPassword)}
+                        disabled={loading} // Disable during loading
                       >
                         {showPassword ? <EyeSlashFill /> : <EyeFill />}
                       </Button>
@@ -74,9 +79,26 @@ const LoginCard = ({
                   </Form.Group>
 
                   <Button
-                    style={{ backgroundColor: '#0096D6'}}
-                    type="submit" className="loginButton shadow">
-                    Login
+                    style={{ backgroundColor: '#0096D6' }}
+                    type="submit"
+                    className="loginButton shadow"
+                    disabled={loading} // Disable during loading
+                  >
+                    {loading ? (
+                      <>
+                        <Spinner
+                          as="span"
+                          animation="border"
+                          size="sm"
+                          role="status"
+                          aria-hidden="true"
+                          className="me-2"
+                        />
+                        Logging in...
+                      </>
+                    ) : (
+                      "Login"
+                    )}
                   </Button>
                 </Form>
               </Card.Body>

@@ -14,3 +14,18 @@
 .shadow {
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
 }
+
+/* Add to Login.css */
+.loginButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.form-control:disabled {
+  background-color: #f8f9fa;
+}
+
+/* Smooth transition for button state */
+.loginButton {
+  transition: all 0.3s ease;
+}
