@@ -188,60 +188,85 @@ const ComponentForm = ({ onCancel, onSave, initialData = {} }) => {
     setFormState((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
 
-    const timestamp = new Date().toISOString();
-    const payload = {
-      ...formState,
-      created_at: isEditMode ? initialData.created_at : timestamp,
-      updated_at: timestamp,
-      created_by: isEditMode ? initialData.created_by : userId,
-      updated_by: userId,
-    };
+  console.log("🚀 Form submission started");
 
-    const url = isEditMode
-      ? `${baseURL}/components/${formState.component_id}/`
-      : `${baseURL}/components/`;
+  const timestamp = new Date().toISOString();
 
-    const method = isEditMode ? "PUT" : "POST";
-
-    try {
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to process request');
-      }
-
-      Swal.fire({
-        icon: "success",
-        title: "Success!",
-        text: `Component ${isEditMode ? "updated" : "created"} successfully!`,
-        confirmButtonColor: "#3085d6",
-      }).then(() => {
-        if (onSave) onSave();
-      });
-
-    } catch (error) {
-      console.error("Error submitting form:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: error.message || `Failed to ${isEditMode ? "update" : "create"} component`,
-        confirmButtonColor: "#d33",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+  const payload = {
+    ...formState,
+    created_at: isEditMode ? initialData.created_at : timestamp,
+    updated_at: timestamp,
+    created_by: isEditMode ? initialData.created_by : userId,
+    updated_by: userId,
   };
+
+  console.log("📝 Mode:", isEditMode ? "EDIT" : "CREATE");
+  console.log("📦 Payload:", payload);
+
+  const url = isEditMode
+    ? `${baseURL}/components/${formState.component_id}/`
+    : `${baseURL}/components/`;
+
+  const method = isEditMode ? "PUT" : "POST";
+
+  console.log("🌐 API URL:", url);
+  console.log("📡 HTTP Method:", method);
+
+  try {
+    const response = await fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    console.log("📥 Raw response:", response);
+
+    const responseData = await response.json();
+    console.log("📥 Response body:", responseData);
+
+    if (!response.ok) {
+      console.error("❌ API Error:", responseData);
+      throw new Error(responseData.message || "Failed to process request");
+    }
+
+    console.log("✅ API Success");
+
+    Swal.fire({
+      icon: "success",
+      title: "Success!",
+      text: `Component ${isEditMode ? "updated" : "created"} successfully!`,
+      confirmButtonColor: "#3085d6",
+    }).then(() => {
+      console.log("➡️ Success alert closed");
+      if (onSave) {
+        console.log("🔄 Calling onSave()");
+        onSave();
+      }
+    });
+
+  } catch (error) {
+    console.error("🔥 Form submission error:", error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text:
+        error.message ||
+        `Failed to ${isEditMode ? "update" : "create"} component`,
+      confirmButtonColor: "#d33",
+    });
+  } finally {
+    setIsSubmitting(false);
+    console.log("🏁 Form submission finished");
+  }
+};
+
 
   return (
     <div className="container mt-4 service-request-form">

@@ -65,17 +65,18 @@ const AdminLogin = () => {
 
   return (
     <LoginCard
-      title="Admin Login"
-      username={username}
-      password={password}
-      showPassword={showPassword}
-      loading={loading} // Pass loading state
-      setUsername={setUsername}
-      setPassword={setPassword}
-      setShowPassword={setShowPassword}
-      handleSubmit={handleSubmit}
-      error={error}
-    />
+  title="Admin Login"
+  username={username}
+  password={password}
+  showPassword={showPassword}
+  loading={loading}
+  setUsername={setUsername}
+  setPassword={setPassword}
+  setShowPassword={setShowPassword}
+  handleSubmit={handleSubmit}
+  error={error}
+  navigate={navigate}   // ✅ Added
+/>
   );
 };
 
