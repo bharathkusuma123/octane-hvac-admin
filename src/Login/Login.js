@@ -29,39 +29,35 @@ const AdminLogin = () => {
   }, [userRole, submitted, navigate]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log("Form submitted");
-    console.log("Username:", username);
-    console.log("Password:", password);
-    
-    setError(""); // Clear previous errors
-    setLoading(true); // Start loading
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-    try {
-      const response = await axios.post(`${baseURL}/user-login/`, {
-        username,
-        password,
-        fcm_token: "123"
-      });
+  try {
+    const response = await axios.post(`${baseURL}/user-login/`, {
+      username,
+      password,
+      fcm_token: ""
+    });
 
-      const user = response.data.data;
-      console.log("Login response:", response);
-      console.log("User data:", user);
+    const user = response.data.data;
+    const sessionId = response.data.data.session_id; // ✅ ADD THIS
 
-      if (user.role === "Admin") {
-        console.log("Admin verified. Logging in...");
-        login(user.role, user.user_id);
-        setSubmitted(true); // triggers the useEffect
-      } else {
-        setError("User is not an Admin");
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-      setError(err.response?.data?.message || "Invalid Username or Password");
-    } finally {
-      setLoading(false); // Stop loading
+    if (user.role === "Admin") {
+      // ✅ Pass sessionId also
+      login(user.role, user.user_id, sessionId);
+
+      setSubmitted(true);
+    } else {
+      setError("User is not an Admin");
     }
-  };
+  } catch (err) {
+    console.error("Login error:", err);
+    setError(err.response?.data?.message || "Invalid Username or Password");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <LoginCard

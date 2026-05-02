@@ -910,7 +910,7 @@ const ResourceTable = ({ onAdd, onEdit }) => {
                     </span>
                   </td>
                   <td>﷼ {res.hourly_rate}</td>
-                  <td>{res.average_rating}</td>
+                  <td>{res.average_rating} ﷼</td>
                   <td>{formatDateTime(res.created_at)}</td>
                   <td>{getUsername(res.created_by)}</td>
                   <td>

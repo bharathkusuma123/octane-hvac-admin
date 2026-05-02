@@ -533,6 +533,8 @@ import "./UserManagement.css";
 import baseURL from "../ApiUrl/Apiurl";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import Swal from 'sweetalert2';
+import { useNavigate } from "react-router-dom";
+import { FaKey } from "react-icons/fa";
 
 const UserTable = ({ onAdd, onEdit }) => {
   const [users, setUsers] = useState([]);
@@ -546,6 +548,8 @@ const UserTable = ({ onAdd, onEdit }) => {
   const [servicePools, setServicePools] = useState([]);
   const userId = localStorage.getItem("userId");
 const companyId = localStorage.getItem("selectedCompany");
+
+const navigate = useNavigate();
 
   const fetchResources = async () => {
   try {
@@ -881,6 +885,16 @@ const isEngineerActive = (user) => {
     );
   }
 
+   const handleResetPassword = (user) => {
+    navigate(`/admin/users/${user.user_id}/reset-password`, {
+      state: {
+        user,           // full user object (has mobile, security_question1/2, answer1/2)
+        companyId,
+        userId,
+      },
+    });
+  };
+
   return (
     <div className="user-management-container">
       {/* Header */}
@@ -954,6 +968,7 @@ const isEngineerActive = (user) => {
               <th>Country</th>
               <th>Status</th>
               <th>Role</th>
+              <th>Reset Password</th>  {/* ── NEW column header ── */}
               <th>Default Company</th>
               <th>Accessible Companies</th>
               <th>Created At</th>
@@ -988,6 +1003,16 @@ const isEngineerActive = (user) => {
                     </span>
                   </td>
                   <td>{user.role}</td>
+                   <td>
+                    <button
+                      className="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
+                      onClick={() => handleResetPassword(user)}
+                      title={`Reset password for ${user.username}`}
+                    >
+                      <FaKey size={12} />
+                      Reset Password
+                    </button>
+                  </td>
                   <td title={getCompanyName(user.default_company)}>
                     {getCompanyName(user.default_company)}
                   </td>

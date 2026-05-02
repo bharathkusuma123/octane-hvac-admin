@@ -15,6 +15,7 @@ import ProductView from "./Products/ProductView";
 import Signup from "./Login/Signup";
 import ForgotPassword from "./Login/ForgotPassword";
 import AdminResetPasswordScreen from "./Login/ResetPassword";
+import UsersResetPassword from "./Users/UsersResetPassword";
 
 
 function App() {
@@ -56,6 +57,16 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/admin/users/:id/reset-password"
+            element={
+              <ProtectedRoute>
+                <UsersResetPassword />
+              </ProtectedRoute>
+            }
+          /> 
+
           <Route
             path="/admin/user-management"
             element={

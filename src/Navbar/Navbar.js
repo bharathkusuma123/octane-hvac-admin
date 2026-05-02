@@ -288,10 +288,11 @@ const TopNavbar = () => {
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("");
 
-  const handleLogout = () => {
+  const handleLogout = () => { 
     localStorage.removeItem("userRole");
     localStorage.removeItem("userId");
     localStorage.removeItem("selectedCompany");
+    localStorage.removeItem("session_id");
     updateCompany("");
     navigate("/");
   };
