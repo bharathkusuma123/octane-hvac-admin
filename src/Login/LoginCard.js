@@ -12,19 +12,20 @@ import {
 } from "react-bootstrap";
 import { EyeFill, EyeSlashFill } from "react-bootstrap-icons";
 import logo from "../Logos/hvac-logo-new.jpg";
-import "./Login.css"
+import "./Login.css";
 
 const LoginCard = ({
   title,
   username,
   password,
   showPassword,
-  loading, // Added loading prop
+  loading,
   setUsername,
   setPassword,
   setShowPassword,
   handleSubmit,
   error,
+  navigate, // ✅ Added
 }) => {
   return (
     <div className="d-flex align-items-center justify-content-center min-vh-100">
@@ -53,11 +54,11 @@ const LoginCard = ({
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
-                      disabled={loading} // Disable during loading
+                      disabled={loading}
                     />
                   </Form.Group>
 
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-2">
                     <Form.Label>Password</Form.Label>
                     <InputGroup>
                       <Form.Control
@@ -66,23 +67,34 @@ const LoginCard = ({
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        disabled={loading} // Disable during loading
+                        disabled={loading}
                       />
                       <Button
                         variant="outline-secondary"
                         onClick={() => setShowPassword(!showPassword)}
-                        disabled={loading} // Disable during loading
+                        disabled={loading}
                       >
                         {showPassword ? <EyeSlashFill /> : <EyeFill />}
                       </Button>
                     </InputGroup>
                   </Form.Group>
 
+                  {/* ✅ Forgot Password */}
+                  <div className="text-end mb-3">
+                    <span
+                      className="forgot"
+                      style={{ cursor: "pointer", color: "#0096D6" }}
+                      onClick={() => navigate("/forgot-password")}
+                    >
+                      Forgot Password?
+                    </span>
+                  </div>
+
                   <Button
-                    style={{ backgroundColor: '#0096D6' }}
+                    style={{ backgroundColor: "#0096D6" }}
                     type="submit"
-                    className="loginButton shadow"
-                    disabled={loading} // Disable during loading
+                    className="loginButton shadow w-100"
+                    disabled={loading}
                   >
                     {loading ? (
                       <>
@@ -101,6 +113,19 @@ const LoginCard = ({
                     )}
                   </Button>
                 </Form>
+
+                {/* ✅ Set Password */}
+                <p className="registerText text-center mt-3">
+                  Fisrt time login?{" "}
+                  <span
+                    className="registerLink"
+                    style={{ cursor: "pointer", color: "#0096D6" }}
+                    onClick={() => navigate("/signup")}
+                  >
+                    Set your security questions
+                  </span>
+                </p>
+
               </Card.Body>
             </Card>
           </Col>

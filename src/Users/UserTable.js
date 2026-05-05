@@ -533,6 +533,8 @@ import "./UserManagement.css";
 import baseURL from "../ApiUrl/Apiurl";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import Swal from 'sweetalert2';
+import { useNavigate } from "react-router-dom";
+import { FaKey } from "react-icons/fa";
 
 const UserTable = ({ onAdd, onEdit }) => {
   const [users, setUsers] = useState([]);
@@ -542,6 +544,36 @@ const UserTable = ({ onAdd, onEdit }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [companiesData, setCompaniesData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [resources, setResources] = useState([]);
+  const [servicePools, setServicePools] = useState([]);
+  const userId = localStorage.getItem("userId");
+const companyId = localStorage.getItem("selectedCompany");
+
+const navigate = useNavigate();
+
+  const fetchResources = async () => {
+  try {
+    const response = await fetch(`${baseURL}/resources/?user_id=${userId}&company_id=${companyId}`);
+    const data = await response.json();
+    if (data.status === "success") {
+      setResources(data.data);
+    }
+  } catch (error) {
+    console.error("Failed to load resources data", error);
+  }
+};
+
+const fetchServicePools = async () => {
+  try {
+    const response = await fetch(`${baseURL}/service-pools/?user_id=${userId}&company_id=${companyId}`);
+    const data = await response.json();
+    if (data.status === "success") {
+      setServicePools(data.data);
+    }
+  } catch (error) {
+    console.error("Failed to load service pool data", error);
+  }
+};
 
   // Fetch companies data
   const fetchCompanies = async () => {
@@ -643,6 +675,8 @@ const UserTable = ({ onAdd, onEdit }) => {
       
       // Fetch companies first
       await fetchCompanies();
+       await fetchResources(); // ✅ ADD THIS
+       await fetchServicePools();
       
       // Then fetch users
       try {
@@ -764,36 +798,79 @@ const UserTable = ({ onAdd, onEdit }) => {
     setCurrentPage(1);
   }, [searchTerm, users, companiesData]);
 
-  const handleDelete = async (userId) => {
-    const confirmed = await Swal.fire({
-      title: "Are you sure?",
-      text: `You are about to delete user ID: ${userId}`,
+  const getResourceId = (userId) => {
+  if (!resources || resources.length === 0) return "-";
+
+  const resource = resources.find(res => res.user === userId);
+  return resource ? resource.resource_id : "-";
+};
+
+const isEngineerActive = (user) => {
+  // Only apply for Service Engineer
+  if (user.role !== "Service Engineer") return false;
+
+  const resourceId = getResourceId(user.user_id);
+  if (!resourceId || resourceId === "-") return false;
+
+  // Get all requests assigned to this engineer
+  const assignedRequests = servicePools.filter(
+    (req) => req.assigned_engineer === resourceId
+  );
+
+  if (assignedRequests.length === 0) return false;
+
+  // Check if ANY request is NOT closed
+  const hasActiveRequest = assignedRequests.some(
+    (req) => req.status !== "Closed"
+  );
+
+  return hasActiveRequest; // true = disable delete
+};
+
+  const handleDelete = async (user) => {
+  const isActive = isEngineerActive(user);
+
+  // 🚫 Block delete if engineer is active
+  if (isActive) {
+    Swal.fire({
       icon: "warning",
-      showCancelButton: true,
+      title: "Action Not Allowed",
+      text: "This engineer is currently assigned to active service requests. You cannot delete this user.",
       confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
     });
+    return;
+  }
 
-    if (confirmed.isConfirmed) {
-      try {
-        const response = await fetch(`${baseURL}/users/${userId}/`, {
-          method: "DELETE",
-        });
+  // ✅ Normal delete flow
+  const confirmed = await Swal.fire({
+    title: "Are you sure?",
+    text: `You are about to delete user ID: ${user.user_id}`,
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "Yes, delete it!",
+  });
 
-        if (!response.ok) throw new Error("Delete failed");
+  if (confirmed.isConfirmed) {
+    try {
+      const response = await fetch(`${baseURL}/users/${user.user_id}/`, {
+        method: "DELETE",
+      });
 
-        Swal.fire("Deleted!", "User has been deleted.", "success");
+      if (!response.ok) throw new Error("Delete failed");
 
-        const updatedUsers = users.filter((u) => u.user_id !== userId);
-        setUsers(updatedUsers);
-        setFilteredUsers(updatedUsers);
-      } catch (error) {
-        console.error("Delete error:", error);
-        Swal.fire("Error", "Failed to delete user", "error");
-      }
+      Swal.fire("Deleted!", "User has been deleted.", "success");
+
+      const updatedUsers = users.filter((u) => u.user_id !== user.user_id);
+      setUsers(updatedUsers);
+      setFilteredUsers(updatedUsers);
+    } catch (error) {
+      console.error("Delete error:", error);
+      Swal.fire("Error", "Failed to delete user", "error");
     }
-  };
+  }
+};
 
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
@@ -807,6 +884,16 @@ const UserTable = ({ onAdd, onEdit }) => {
       </div>
     );
   }
+
+   const handleResetPassword = (user) => {
+    navigate(`/admin/users/${user.user_id}/reset-password`, {
+      state: {
+        user,           // full user object (has mobile, security_question1/2, answer1/2)
+        companyId,
+        userId,
+      },
+    });
+  };
 
   return (
     <div className="user-management-container">
@@ -871,6 +958,7 @@ const UserTable = ({ onAdd, onEdit }) => {
             <tr>
               <th>S.No</th>
               <th>User ID</th>
+              <th>Resource ID</th>
               <th>Full Name</th>
               <th>Username</th>
               <th>Email</th>
@@ -880,6 +968,7 @@ const UserTable = ({ onAdd, onEdit }) => {
               <th>Country</th>
               <th>Status</th>
               <th>Role</th>
+              <th>Reset Password</th>  {/* ── NEW column header ── */}
               <th>Default Company</th>
               <th>Accessible Companies</th>
               <th>Created At</th>
@@ -892,6 +981,11 @@ const UserTable = ({ onAdd, onEdit }) => {
                 <tr key={index}>
                   <td>{indexOfFirstEntry + index + 1}</td>
                   <td>{user.user_id}</td>
+                  <td>
+  {user.role === "Service Engineer"
+    ? getResourceId(user.user_id)
+    : "-"}
+</td>
                   <td>{user.full_name}</td>
                   <td>{user.username}</td>
                   <td>{user.email}</td>
@@ -909,6 +1003,16 @@ const UserTable = ({ onAdd, onEdit }) => {
                     </span>
                   </td>
                   <td>{user.role}</td>
+                   <td>
+                    <button
+                      className="btn btn-sm btn-outline-danger d-flex align-items-center gap-1"
+                      onClick={() => handleResetPassword(user)}
+                      title={`Reset password for ${user.username}`}
+                    >
+                      <FaKey size={12} />
+                      Reset Password
+                    </button>
+                  </td>
                   <td title={getCompanyName(user.default_company)}>
                     {getCompanyName(user.default_company)}
                   </td>
@@ -925,7 +1029,7 @@ const UserTable = ({ onAdd, onEdit }) => {
                       />
                       <FaTrash
                         title="Delete"
-                        onClick={() => handleDelete(user.user_id)}
+                        onClick={() => handleDelete(user)}
                         className="action-icon delete-icon"
                       />
                     </div>

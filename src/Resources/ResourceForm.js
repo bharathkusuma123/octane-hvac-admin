@@ -19,48 +19,90 @@ const ResourceForm = ({ onCancel, onSave }) => {
   const [engineers, setEngineers] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    const fetchEngineers = async () => {
-      try {
-        const response = await axios.get(`${baseURL}/users/`);
-        const filtered = response.data.filter(
-          (user) => user.role === "Service Engineer"
-        );
-        setEngineers(filtered);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Failed to load engineers list",
-          confirmButtonColor: "#d33",
-        });
-      }
-    };
-    fetchEngineers();
-  }, []);
+  const [errors, setErrors] = useState({
+  resourceId: "",
+});
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+useEffect(() => {
+  const fetchEngineers = async () => {
+    try {
+      const selectedCompany = localStorage.getItem("selectedCompany");
 
-    if (name === "engineerId") {
-      const selectedEngineer = engineers.find(
-        (eng) => eng.user_id == value
+      // ✅ 1. Fetch users
+      const usersRes = await axios.get(`${baseURL}/users/`);
+
+      // ✅ 2. Fetch resources
+      const resourcesRes = await axios.get(
+        `${baseURL}/resources/?user_id=${userId}&company_id=${selectedCompany}`
       );
-      setFormData((prev) => ({
-        ...prev,
-        engineerId: value,
-        mobile_no: selectedEngineer?.mobile || "",
-        email: selectedEngineer?.email || "",
-        fullName: selectedEngineer?.username || "",
-      }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+
+      const allEngineers = usersRes.data.filter(
+        (user) => user.role === "Service Engineer"
+      );
+
+      // ✅ 3. Get already used user IDs
+      const usedUserIds = resourcesRes.data.data.map(
+        (res) => res.user
+      );
+
+      // ✅ 4. Filter out matched users
+      const availableEngineers = allEngineers.filter(
+        (eng) => !usedUserIds.includes(eng.user_id)
+      );
+
+      setEngineers(availableEngineers);
+
+    } catch (error) {
+      console.error("Error fetching engineers/resources:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to load engineers list",
+        confirmButtonColor: "#d33",
+      });
     }
   };
 
+  fetchEngineers();
+}, [userId]);
+
+ const handleChange = (e) => {
+  const { name, value } = e.target;
+
+  if (name === "resourceId") {
+    let errorMsg = "";
+
+    if (value.includes("#")) {
+      errorMsg = "Resource ID should not contain #";
+    }
+
+    setErrors((prev) => ({
+      ...prev,
+      resourceId: errorMsg,
+    }));
+  }
+
+  if (name === "engineerId") {
+    const selectedEngineer = engineers.find(
+      (eng) => eng.user_id == value
+    );
+    setFormData((prev) => ({
+      ...prev,
+      engineerId: value,
+      mobile_no: selectedEngineer?.mobile || "",
+      email: selectedEngineer?.email || "",
+      fullName: selectedEngineer?.username || "",
+    }));
+  } else {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }
+};
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (errors.resourceId) {
+  return;
+}
     setIsSubmitting(true);
     
     const selectedCompany = localStorage.getItem("selectedCompany");
@@ -117,18 +159,31 @@ const ResourceForm = ({ onCancel, onSave }) => {
         if (onSave) onSave();
       });
       
-    } catch (error) {
-      console.error("Failed to save resource:", error);
-      const errorMessage = error.response?.data?.message || 
-                          error.response?.data?.error || 
-                          error.message || 
-                          "Failed to save resource";
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: errorMessage,
-        confirmButtonColor: "#d33",
-      });
+    }
+     catch (error) {
+  console.error("Failed to save resource:", error);
+
+  let errorMessage = "Failed to save resource";
+
+  // ✅ Check for field-level errors first
+  if (error.response?.data?.errors?.resource_id?.length > 0) {
+    errorMessage = error.response.data.errors.resource_id[0];
+  }
+  // fallback options
+  else if (error.response?.data?.message) {
+    errorMessage = error.response.data.message;
+  } else if (error.response?.data?.error) {
+    errorMessage = error.response.data.error;
+  } else if (error.message) {
+    errorMessage = error.message;
+  }
+
+  Swal.fire({
+    icon: "error",
+    title: "Error",
+    text: errorMessage,
+    confirmButtonColor: "#d33",
+  });
     } finally {
       setIsSubmitting(false);
     }
@@ -151,15 +206,21 @@ const ResourceForm = ({ onCancel, onSave }) => {
             <div className="row g-3">
               <div className="col-md-4">
                 <label className="form-label">Resource ID</label>
-                <input
-                  type="text"
-                  name="resourceId"
-                  value={formData.resourceId}
-                  onChange={handleChange}
-                  className="form-control"
-                  placeholder="e.g., RS1, RS2"
-                  required
-                />
+               <input
+  type="text"
+  name="resourceId"
+  value={formData.resourceId}
+  onChange={handleChange}
+  className={`form-control ${errors.resourceId ? "is-invalid" : ""}`}
+  placeholder="e.g., RS1, RS2"
+  required
+/>
+
+{errors.resourceId && (
+  <div className="text-danger mt-1">
+    {errors.resourceId}
+  </div>
+)}
               </div>
 
               <div className="col-md-4">

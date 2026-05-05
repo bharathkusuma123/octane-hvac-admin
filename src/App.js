@@ -12,6 +12,11 @@ import UserManagement from "./Users/UserManagement";
 import ProtectedRoute from "./Navbar/ProtectedRoute";
 import ComponentView from "./Components/ComponentView"; // adjust path accordingly
 import ProductView from "./Products/ProductView";
+import Signup from "./Login/Signup";
+import ForgotPassword from "./Login/ForgotPassword";
+import AdminResetPasswordScreen from "./Login/ResetPassword";
+import UsersResetPassword from "./Users/UsersResetPassword";
+
 
 function App() {
   return (
@@ -19,6 +24,9 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<AdminLogin />} />
+           <Route path="/signup" element={<Signup />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<AdminResetPasswordScreen />} />
           <Route
             path="/admin/component"
             element={
@@ -49,6 +57,16 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/admin/users/:id/reset-password"
+            element={
+              <ProtectedRoute>
+                <UsersResetPassword />
+              </ProtectedRoute>
+            }
+          /> 
+
           <Route
             path="/admin/user-management"
             element={

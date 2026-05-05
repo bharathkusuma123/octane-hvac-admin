@@ -157,7 +157,7 @@ const handleSubmit = async (e) => {
                   className="form-control"
                   placeholder="e.g., RS1, RS2"
                   required
-                  readOnly // Typically resource ID shouldn't be changed
+                  disabled // Typically resource ID shouldn't be changed
                 />
               </div>
 
