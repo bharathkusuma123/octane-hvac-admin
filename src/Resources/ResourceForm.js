@@ -23,26 +23,48 @@ const ResourceForm = ({ onCancel, onSave }) => {
   resourceId: "",
 });
 
-  useEffect(() => {
-    const fetchEngineers = async () => {
-      try {
-        const response = await axios.get(`${baseURL}/users/`);
-        const filtered = response.data.filter(
-          (user) => user.role === "Service Engineer"
-        );
-        setEngineers(filtered);
-      } catch (error) {
-        console.error("Error fetching users:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Failed to load engineers list",
-          confirmButtonColor: "#d33",
-        });
-      }
-    };
-    fetchEngineers();
-  }, []);
+useEffect(() => {
+  const fetchEngineers = async () => {
+    try {
+      const selectedCompany = localStorage.getItem("selectedCompany");
+
+      // ✅ 1. Fetch users
+      const usersRes = await axios.get(`${baseURL}/users/`);
+
+      // ✅ 2. Fetch resources
+      const resourcesRes = await axios.get(
+        `${baseURL}/resources/?user_id=${userId}&company_id=${selectedCompany}`
+      );
+
+      const allEngineers = usersRes.data.filter(
+        (user) => user.role === "Service Engineer"
+      );
+
+      // ✅ 3. Get already used user IDs
+      const usedUserIds = resourcesRes.data.data.map(
+        (res) => res.user
+      );
+
+      // ✅ 4. Filter out matched users
+      const availableEngineers = allEngineers.filter(
+        (eng) => !usedUserIds.includes(eng.user_id)
+      );
+
+      setEngineers(availableEngineers);
+
+    } catch (error) {
+      console.error("Error fetching engineers/resources:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to load engineers list",
+        confirmButtonColor: "#d33",
+      });
+    }
+  };
+
+  fetchEngineers();
+}, [userId]);
 
  const handleChange = (e) => {
   const { name, value } = e.target;
